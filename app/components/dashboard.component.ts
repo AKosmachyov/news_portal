@@ -5,9 +5,9 @@ import { NewsService } from '../services/news-service';
 
 @Component({
     selector: 'dashboard',
-    templateUrl: `
+    template: `
         <div class="col-md-8 col-xs-8">
-            <preview-news *ngFor="let item of news" [news]="item"></preview-news>
+            <preview-news *ngFor="let item of news" [news]="item" [routerLink]="['/news', item.id]"></preview-news>
         </div>
         <div class="col-md-4 col-xs-4">
             search element
@@ -18,6 +18,6 @@ export class DashboardComponent implements OnInit {
     news: News[];
     constructor( private newsService : NewsService ) { };
     ngOnInit(): void {
-        this.newsService.getData().then((arr) => this.news = arr);
+        this.newsService.getNewsArr().then((arr) => this.news = arr);
     }
 }

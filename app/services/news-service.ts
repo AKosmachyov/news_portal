@@ -11,12 +11,20 @@ export class NewsService {
 
     constructor(private http: Http) { }
 
-    getData(): Promise<News[]> {
+    getNewsArr(): Promise<News[]> {
         return this.http.get(this.newsUrl)
             .toPromise()
             .then(response => response.json().data as News[])
             .catch(this.handleError);
     }
+    getNews(id: number): Promise<News> {
+        const url = `${this.newsUrl}/${id}`;
+        return this.http.get(url)
+            .toPromise()
+            .then(response => response.json().data as News)
+            .catch(this.handleError);
+    }
+
 
     private handleError(error: any): Promise<any> {
         console.error('An error occurred', error);

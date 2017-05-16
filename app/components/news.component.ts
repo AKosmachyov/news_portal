@@ -1,4 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Location } from '@angular/common';
+import 'rxjs/add/operator/switchMap';
+
+import { NewsService } from '../services/news-service';
+
 import { News } from '../models/news';
 
 @Component({
@@ -28,6 +34,17 @@ import { News } from '../models/news';
     `]
 })
 
-export class NewsComponent {
+export class NewsComponent implements OnInit {
     news: News;
+    constructor(
+        private newsService: NewsService,
+        private route: ActivatedRoute,
+        private location: Location
+    ) {}
+
+    ngOnInit(): void {
+        this.route.params
+            .switchMap((params: Params) => this.newsService.getNews(+params['id']))
+            .subscribe(news => this.news = news);
+    }
 }

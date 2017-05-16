@@ -2,6 +2,7 @@ import { InMemoryDbService } from 'angular-in-memory-web-api';
 export class InMemoryDataService implements InMemoryDbService {
     createDb() {
         let news = [ {
+            id:1,
             tag: 'новинки',
             title: 'Новость 1',
             author: 'редакция яндекс',
@@ -11,6 +12,7 @@ export class InMemoryDataService implements InMemoryDbService {
         c. Создание новости`,
             modifiedDate: new Date('2017-05-17T03:24:00')
         }, {
+            id:2,
             tag: 'новинки',
             title: 'Новость 2',
             author: 'редакция яндекс',
@@ -18,6 +20,7 @@ export class InMemoryDataService implements InMemoryDbService {
             content: `- aвторизация/регистрация	- просмотр ленты новостей	- просмотр новости полностью           
 	            - добавлние/редактирование/удаление новости`
         }, {
+            id:3,
             tag: 'other',
             title: 'Новость 3',
             author: 'редакция яндекс',

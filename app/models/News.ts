@@ -5,6 +5,7 @@ export class News {
     author: string;
     publicationDate: Date;
     modifiedDate: Date;
+    id: number;
 
     constructor(obj) {
         this.title = obj.title;
