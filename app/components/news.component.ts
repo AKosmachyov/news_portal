@@ -14,12 +14,12 @@ import { News } from '../models/news';
             <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
             <h1 class="title">
-                <a>{{news.title}}</a>
+                {{news.title}}
             </h1>
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
                 <i class="glyphicon glyphicon-user"></i><span>{{news.author}}</span>
             <div>
-                <span>{{news.content}}</span>
+                <span class="content">{{news.content}}</span>
             </div>
         </div>
     `,
@@ -30,6 +30,10 @@ import { News } from '../models/news';
         }
         i {
             margin-right: 8px;
+        }
+        .content {
+            font-size: 16px;
+            line-height: 160%;    
         }
     `]
 })
