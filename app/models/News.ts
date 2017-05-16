@@ -12,5 +12,6 @@ export class News {
         this.tag = obj.tag;
         this.author = obj.author;
         this.publicationDate = obj.publicationDate;
+        this.modifiedDate = obj.modifiedDate || null;
     }
 }

@@ -6,6 +6,7 @@ import { News } from './models/news';
     template: `
         <div class="preview-news" *ngIf="!!news">
             <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
+            <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
             <h1 class="title" (click)="isCollapsedContent = !isCollapsedContent">
                 <a>{{news.title}}</a>
             </h1>

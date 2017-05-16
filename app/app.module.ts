@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import {PreviewNewsComponent } from './preview-news.component';
 import { Collapse } from './directives/collapse.component';
 
+import { NewsService } from './services/news-service';
 @NgModule({
     imports: [ BrowserModule, FormsModule ],
     declarations: [
@@ -13,7 +14,8 @@ import { Collapse } from './directives/collapse.component';
         PreviewNewsComponent,
         Collapse
     ],
-    bootstrap: [ AppComponent ]
+    bootstrap: [ AppComponent ],
+    providers: [ NewsService ]
 })
 
 export class AppModule { }
