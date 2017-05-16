@@ -5,11 +5,12 @@ import { News } from './models/news';
     selector: 'preview-news',
     template: `
         <div class="preview-news" *ngIf="!!news">
-            <span>{{news.publicationDate}}</span>
+            <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <h1 class="title" (click)="isCollapsedContent = !isCollapsedContent">
                 <a>{{news.title}}</a>
             </h1>
-            <span>{{news.tag}}</span><span>{{news.author}}</span>
+                <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
+                <i class="glyphicon glyphicon-user"></i><span>{{news.author}}</span>
             <div>
                 <span *ngIf="!isCollapsedContent">{{news.content.slice(0,news.content.indexOf('.')+1)}}</span>                
                 <a (click)="isCollapsedContent = !isCollapsedContent">подробнее...</a>
@@ -31,6 +32,9 @@ import { News } from './models/news';
         }
         a {
             cursor: pointer; 
+        }
+        i {
+            margin-right: 8px;
         }
     `]
 })
