@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { News } from './models/news';
+import { News } from '../models/news';
 
 @Component({
     selector: 'preview-news',
@@ -7,19 +7,14 @@ import { News } from './models/news';
         <div class="preview-news" *ngIf="!!news">
             <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
-            <h1 class="title" (click)="isCollapsedContent = !isCollapsedContent">
+            <h1 class="title">
                 <a>{{news.title}}</a>
             </h1>
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
                 <i class="glyphicon glyphicon-user"></i><span>{{news.author}}</span>
             <div>
-                <span *ngIf="!isCollapsedContent">{{news.content.slice(0,news.content.indexOf('.')+1)}}</span>                
-                <a (click)="isCollapsedContent = !isCollapsedContent">подробнее...</a>
-                <div [collapse]="isCollapsedContent">
-                    <div class="well well-lg">
-                        {{news.content}}                
-                    </div>
-                </div>
+                <span>{{news.content.slice(0,news.content.indexOf('.')+1)}}</span>                
+                <a>подробнее...</a>
             </div>
         </div>
     `,
@@ -29,7 +24,7 @@ import { News } from './models/news';
             margin-bottom: 0;
         }
         .preview-news {
-            margin-bottom: 30px;
+            margin-top: 16px;
         }
         a {
             cursor: pointer; 
@@ -42,5 +37,4 @@ import { News } from './models/news';
 
 export class PreviewNewsComponent {
     @Input() news: News;
-    isCollapsedContent:boolean = false;
 }

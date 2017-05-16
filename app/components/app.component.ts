@@ -1,7 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { News } from './models/news';
-
-import { NewsService } from './services/news-service';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'app',
@@ -20,12 +17,7 @@ import { NewsService } from './services/news-service';
             </div>
         </header>
         <div class="container">
-            <div class="col-md-8 col-xs-8">
-                <preview-news *ngFor="let item of news" [news]="item"></preview-news>
-            </div>
-            <div class="col-md-4 col-xs-4">
-                search element
-            </div>
+            <router-outlet></router-outlet>
         </div>                
     `,
     styles: [`
@@ -40,10 +32,4 @@ import { NewsService } from './services/news-service';
     `]
 })
 
-export class AppComponent implements OnInit {
-    news: News[];
-    constructor(private newsService : NewsService) { };
-    ngOnInit(): void {
-        this.news = this.newsService.getData();
-    }
-}
+export class AppComponent { }

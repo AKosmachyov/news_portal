@@ -1,0 +1,23 @@
+import { Component, OnInit } from '@angular/core';
+import { News } from '../models/news';
+
+import { NewsService } from '../services/news-service';
+
+@Component({
+    selector: 'dashboard',
+    templateUrl: `
+        <div class="col-md-8 col-xs-8">
+            <preview-news *ngFor="let item of news" [news]="item"></preview-news>
+        </div>
+        <div class="col-md-4 col-xs-4">
+            search element
+        </div>
+    `
+})
+export class DashboardComponent implements OnInit {
+    news: News[];
+    constructor( private newsService : NewsService ) { };
+    ngOnInit(): void {
+        this.newsService.getData().then((arr) => this.news = arr);
+    }
+}
