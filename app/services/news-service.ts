@@ -31,6 +31,14 @@ export class NewsService {
             .then(res => res.json().data as News)
             .catch(this.handleError);
     }
+    update(news: News): Promise<News> {
+        const url = `${this.newsUrl}/${news.id}`;
+        return this.http
+            .put(url, JSON.stringify(news))
+            .toPromise()
+            .then(() => news)
+            .catch(this.handleError);
+    }
 
     private handleError(error: any): Promise<any> {
         console.error('An error occurred', error);

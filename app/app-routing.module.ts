@@ -10,6 +10,7 @@ const routes: Routes = [
     { path: 'dashboard',  component: DashboardComponent },
     { path: 'news/:id',  component: NewsComponent },
     { path: 'editor', component: EditorNewsComponent },
+    { path: 'editor/:id', component: EditorNewsComponent },
     { path: '**', redirectTo: '/dashboard' }
 ];
 
