@@ -8,13 +8,13 @@ import { News } from '../models/news';
             <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
             <h1 class="title">
-                <a>{{news.title}}</a>
+                <a [routerLink]="['/news', news.id]">{{news.title}}</a>
             </h1>
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
                 <i class="glyphicon glyphicon-user"></i><span>{{news.author}}</span>
             <div>
                 <span>{{news.content.slice(0,news.content.indexOf('.')+1)}}</span>                
-                <a>подробнее...</a>
+                <a [routerLink]="['/news', news.id]">подробнее...</a>
             </div>
         </div>
     `,

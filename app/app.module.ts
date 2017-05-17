@@ -11,6 +11,7 @@ import { AppComponent } from './components/app.component';
 import { PreviewNewsComponent } from './components/preview-news.component';
 import { NewsComponent } from './components/news.component';
 import { DashboardComponent } from './components/dashboard.component';
+import { EditorNewsComponent } from './components/editor-news.component';
 
 import { NewsService } from './services/news-service';
 
@@ -26,7 +27,8 @@ import { NewsService } from './services/news-service';
         AppComponent,
         PreviewNewsComponent,
         NewsComponent,
-        DashboardComponent
+        DashboardComponent,
+        EditorNewsComponent
     ],
     bootstrap: [ AppComponent ],
     providers: [ NewsService ]

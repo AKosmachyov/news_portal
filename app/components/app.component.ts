@@ -10,6 +10,7 @@ import { Component } from '@angular/core';
                         logo
                     </div>
                     <div class="col-md-4  col-md-offset-4 col-xs-6 normalize-height">
+                        <button class="btn btn-primary" [routerLink]="['/editor']">Добавить</button>           
                         <button class="btn btn-primary">Вход</button>                
                         <button class="btn btn-primary">Регистрация</button>
                     </div>

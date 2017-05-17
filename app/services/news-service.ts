@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { Http } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -9,7 +9,7 @@ import { News } from '../models/news';
 export class NewsService {
     private newsUrl = 'api/news';
 
-    constructor(private http: Http) { }
+    constructor( private http: Http ) { }
 
     getNewsArr(): Promise<News[]> {
         return this.http.get(this.newsUrl)
@@ -24,7 +24,13 @@ export class NewsService {
             .then(response => response.json().data as News)
             .catch(this.handleError);
     }
-
+    addNews(news: News): Promise<News> {
+        return this.http
+            .post(this.newsUrl, JSON.stringify(news))
+            .toPromise()
+            .then(res => res.json().data as News)
+            .catch(this.handleError);
+    }
 
     private handleError(error: any): Promise<any> {
         console.error('An error occurred', error);
