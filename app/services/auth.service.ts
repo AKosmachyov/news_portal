@@ -17,10 +17,13 @@ export class AuthService {
         password: 'qwe',
         name: 'test'
     }];
-    login(login: string, password: string): Observable<boolean> {
+    login (login: string, password: string): Observable<boolean> {
         return Observable.of(true).delay(1000).do(val => this.currentUser = this.users[0]);
     }
-    checkin(user: User): Observable<boolean> {
+    checkin (user: User): Observable<boolean> {
         return Observable.of(true).delay(1000).do(val => this.currentUser = user);
+    }
+    logout (): void {
+        this.currentUser = undefined;
     }
 }

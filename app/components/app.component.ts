@@ -21,6 +21,7 @@ import { User } from '../models/user';
                         <ng-template #userNavbar>
                             <div>
                                 <button class="btn btn-primary" [routerLink]="['/editor']">Добавить</button>
+                                <button class="btn btn-primary" (click)="logout()">выйти</button>
                                 <span>{{user.name}}</span>
                             </div>
                         </ng-template>
@@ -49,7 +50,10 @@ export class AppComponent implements DoCheck{
     constructor( private authService: AuthService) {
         this.user = this.authService.currentUser;
     };
-    ngDoCheck(){
+    ngDoCheck() {
         this.user = this.authService.currentUser;
+    }
+    logout() {
+        this.authService.logout();
     }
 }

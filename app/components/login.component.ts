@@ -6,13 +6,13 @@ import { AuthService } from '../services/auth.service';
 @Component({
     selector: 'login',
     template: `
-       <div>
+        <div class="form-horizontal">
             <label for="login">Логин</label>
-            <input name="login" [(ngModel)]="login"/>
+            <input name="login" class="form-control" [(ngModel)]="login"/>
             <label for="password">Пароль</label>
-            <input name="password" type="password" [(ngModel)]="password"/>
+            <input name="password" type="password" class="form-control" [(ngModel)]="password"/>
             <button class="btn btn-primary" (click)="sendData()">Войти</button>
-       </div>
+        </div>
     `,
     styles: [``]
 })

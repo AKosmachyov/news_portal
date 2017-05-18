@@ -5,6 +5,7 @@ import 'rxjs/add/operator/switchMap';
 
 import { News } from '../models/news';
 
+import { AuthService } from '../services/auth.service';
 import { NewsService } from '../services/news-service';
 
 @Component({
@@ -42,6 +43,7 @@ export class EditorNewsComponent {
     isChange: boolean = false;
     constructor (
         private newsService : NewsService,
+        private authService: AuthService,
         private route: ActivatedRoute,
         private location : Location
     ) {
@@ -61,7 +63,7 @@ export class EditorNewsComponent {
         this.news.title = this.news.title.trim();
         this.news.tag = this.news.tag.trim();
         this.news.publicationDate = new Date();
-        this.news.author = 'Я';
+        this.news.author = this.authService.currentUser.name;
         this.newsService.addNews(this.news).then(() => this.location.back());
     }
     update ():void {
