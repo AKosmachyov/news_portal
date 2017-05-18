@@ -16,7 +16,7 @@ import { User } from '../models/user';
                     <div class="col-md-4  col-md-offset-4 col-xs-6 normalize-height">                    
                         <div *ngIf="!user; else userNavbar">
                              <button class="btn btn-primary" [routerLink]="['/login']">Вход</button>                
-                             <button class="btn btn-primary">Регистрация</button>
+                             <button class="btn btn-primary" [routerLink]="['/checkin']">Регистрация</button>
                         </div>
                         <ng-template #userNavbar>
                             <div>

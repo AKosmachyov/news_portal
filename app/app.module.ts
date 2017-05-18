@@ -13,6 +13,7 @@ import { NewsComponent } from './components/news.component';
 import { DashboardComponent } from './components/dashboard.component';
 import { EditorNewsComponent } from './components/editor-news.component';
 import { LoginComponent } from './components/login.component';
+import { CheckinComponent } from './components/checkin.component';
 
 import { NewsService } from './services/news-service';
 import { AuthService } from './services/auth.service';
@@ -31,7 +32,8 @@ import { AuthService } from './services/auth.service';
         NewsComponent,
         DashboardComponent,
         EditorNewsComponent,
-        LoginComponent
+        LoginComponent,
+        CheckinComponent
     ],
     bootstrap: [ AppComponent ],
     providers: [
