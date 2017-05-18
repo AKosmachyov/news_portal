@@ -17,6 +17,15 @@ export class NewsService {
             .then(response => response.json().data as News[])
             .catch(this.handleError);
     }
+    getNewsRange(from: number, to: number): Promise<News[]> {
+        return this.http.get(this.newsUrl)
+            .toPromise()
+            .then(response => {
+                let arr = response.json().data as News[];
+                return arr.slice(from, to);
+            })
+            .catch(this.handleError);
+    }
     getNews(id: number): Promise<News> {
         const url = `${this.newsUrl}/${id}`;
         return this.http.get(url)
