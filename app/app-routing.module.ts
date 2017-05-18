@@ -7,12 +7,14 @@ import { EditorNewsComponent } from './components/editor-news.component';
 import { LoginComponent } from './components/login.component';
 import { CheckinComponent } from './components/checkin.component';
 
+import { AuthGuard } from './services/auth-guard.service';
+
 const routes: Routes = [
     { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     { path: 'dashboard',  component: DashboardComponent },
     { path: 'news/:id',  component: NewsComponent },
-    { path: 'editor', component: EditorNewsComponent },
-    { path: 'editor/:id', component: EditorNewsComponent },
+    { path: 'editor', component: EditorNewsComponent, canActivate: [ AuthGuard ] },
+    { path: 'editor/:id', component: EditorNewsComponent, canActivate: [ AuthGuard ] },
     { path: "login", pathMatch: 'full', component: LoginComponent},
     { path: "checkin", pathMatch: 'full', component: CheckinComponent},
     { path: '**', redirectTo: '/dashboard' }

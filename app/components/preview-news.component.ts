@@ -7,9 +7,6 @@ import { News } from '../models/news';
         <div class="preview-news" *ngIf="!!news">
             <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
-            <a [routerLink]="['/editor', news.id]" class="link-edit">
-                <i class="glyphicon glyphicon-pencil"></i>
-            </a>
             <h1 class="title">
                 <a [routerLink]="['/news', news.id]">{{news.title}}</a>
             </h1>
@@ -34,9 +31,6 @@ import { News } from '../models/news';
         }
         i {
             margin-right: 8px;
-        }
-        .link-edit {
-            float: right;
         }
         .content {
             word-wrap: break-word;

@@ -17,6 +17,7 @@ import { CheckinComponent } from './components/checkin.component';
 
 import { NewsService } from './services/news-service';
 import { AuthService } from './services/auth.service';
+import { AuthGuard } from './services/auth-guard.service';
 
 @NgModule({
     imports: [
@@ -38,7 +39,8 @@ import { AuthService } from './services/auth.service';
     bootstrap: [ AppComponent ],
     providers: [
         NewsService,
-        AuthService
+        AuthService,
+        AuthGuard
     ]
 })
 

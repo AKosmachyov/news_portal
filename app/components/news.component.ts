@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
 import { NewsService } from '../services/news-service';
+import { AuthService } from '../services/auth.service';
 
 import { News } from '../models/news';
 
@@ -13,6 +14,10 @@ import { News } from '../models/news';
         <div *ngIf="!!news">
             <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
+            <a *ngIf="displayEditButton" [routerLink]="['/editor', news.id]">
+                <i class="glyphicon glyphicon-pencil"></i>
+                Изменить
+            </a>
             <h1 class="title">
                 {{news.title}}
             </h1>
@@ -40,8 +45,10 @@ import { News } from '../models/news';
 
 export class NewsComponent implements OnInit {
     news: News;
+    displayEditButton: boolean = false;
     constructor(
         private newsService: NewsService,
+        private authService: AuthService,
         private route: ActivatedRoute,
         private location: Location
     ) {}
@@ -49,6 +56,10 @@ export class NewsComponent implements OnInit {
     ngOnInit(): void {
         this.route.params
             .switchMap((params: Params) => this.newsService.getNews(+params['id']))
-            .subscribe(news => this.news = news);
+            .subscribe(news => {
+                this.news = news;
+                if(this.authService.currentUser && this.news.author == this.authService.currentUser.name)
+                    this.displayEditButton = true;
+            });
     }
 }
