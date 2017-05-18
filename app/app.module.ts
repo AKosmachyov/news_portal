@@ -12,8 +12,10 @@ import { PreviewNewsComponent } from './components/preview-news.component';
 import { NewsComponent } from './components/news.component';
 import { DashboardComponent } from './components/dashboard.component';
 import { EditorNewsComponent } from './components/editor-news.component';
+import { LoginComponent } from './components/login.component';
 
 import { NewsService } from './services/news-service';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
     imports: [
@@ -28,10 +30,14 @@ import { NewsService } from './services/news-service';
         PreviewNewsComponent,
         NewsComponent,
         DashboardComponent,
-        EditorNewsComponent
+        EditorNewsComponent,
+        LoginComponent
     ],
     bootstrap: [ AppComponent ],
-    providers: [ NewsService ]
+    providers: [
+        NewsService,
+        AuthService
+    ]
 })
 
 export class AppModule { }
