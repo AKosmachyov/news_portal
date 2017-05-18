@@ -13,7 +13,7 @@ import { News } from '../models/news';
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
                 <i class="glyphicon glyphicon-user"></i><span>{{news.author}}</span>
             <div>
-                <span class="content">{{news.content.substr(0,200)}}</span>                
+                <span class="content">{{news.titleContent}}</span>                
                 <a [routerLink]="['/news', news.id]">подробнее...</a>
             </div>
         </div>

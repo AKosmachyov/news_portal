@@ -20,7 +20,7 @@ import { AuthService } from '../services/auth.service';
                         Неверный логин или пароль
                     </div>
                     <input class="form-control" placeholder="Логин" [(ngModel)]="login"/>                    
-                    <input class="form-control" placeholder="Пароль" [(ngModel)]="password"/>
+                    <input type="password" class="form-control" placeholder="Пароль" [(ngModel)]="password"/>
                     <button class="btn btn-info col-xs-6 col-xs-offset-3" (click)="sendData()">Войти</button>
                 </div>
             </div>

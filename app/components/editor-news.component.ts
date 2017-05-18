@@ -11,15 +11,17 @@ import { NewsService } from '../services/news-service';
 @Component({
     selector: 'editor-news',
     template: `
-         <div>
+         <div class="col-md-8 col-md-offset-2">
             <label for="title">Заголовок</label>
-            <input name="title" [(ngModel)]="news.title"/>
+            <input name="title" class="form-control" [(ngModel)]="news.title"/>
             <label for="tag">Тэг</label>
-            <input name="tag" [(ngModel)]="news.tag"/>
+            <input name="tag" class="form-control" [(ngModel)]="news.tag"/>
+            <label for="titleContent">Краткое описание</label>
+            <textarea name="titleContent" cols="30" rows="4" class="form-control" [(ngModel)]="news.titleContent"></textarea>
             <label for="content">Текст</label>
-            <textarea name="content" cols="30" rows="15" [(ngModel)]="news.content"></textarea>
-            <button class="btn btn-primary" (click)="add()" *ngIf="isChange">Добавить</button>
-            <button class="btn btn-primary" (click)="update()" *ngIf="!isChange">Изменить</button>
+            <textarea name="content" cols="30" rows="15" class="form-control" [(ngModel)]="news.content"></textarea>
+            <button class="btn btn-info" (click)="add()" *ngIf="isChange">Добавить</button>
+            <button class="btn btn-info" (click)="update()" *ngIf="!isChange">Изменить</button>
          </div>
     `,
     styles: [`
@@ -29,11 +31,21 @@ import { NewsService } from '../services/news-service';
         }
         textarea {
             resize: none;
-            width: 100%;
-            padding: 20px 20px 0px;
+            padding: 15px 15px 0px;
         }
         input {
             padding: 0 8px;
+        }
+        label {
+            margin: 11px 0;
+        }
+        textarea[name="content"] {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        button {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
         }
     `]
 })
