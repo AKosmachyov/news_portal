@@ -1,10 +1,5 @@
 import { Injectable } from '@angular/core';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/delay';
-
 import { User } from '../models/user';
 
 @Injectable()
@@ -17,13 +12,25 @@ export class AuthService {
         password: 'qwe',
         name: 'test'
     }];
-    login (login: string, password: string): Observable<boolean> {
-        return Observable.of(true).delay(1000).do(val => this.currentUser = this.users[0]);
+    login (login: string, password: string): Promise<User> {
+        return this.findUser(login, password).then((user) => this.currentUser = user);
     }
-    checkin (user: User): Observable<boolean> {
-        return Observable.of(true).delay(1000).do(val => this.currentUser = user);
+    checkin (user: User): Promise<User> {
+        this.users.push(user);
+        this.currentUser = user;
+        return Promise.resolve(user);
     }
     logout (): void {
         this.currentUser = undefined;
+    }
+    findUser(login, password):Promise<User> {
+        return new Promise((resolve, reject) => {
+            for(let i=0; i < this.users.length; i++) {
+                if(this.users[i].login == login && this.users[i].password == password) {
+                    resolve(this.users[i]);
+                }
+            }
+            reject();
+        })
     }
 }

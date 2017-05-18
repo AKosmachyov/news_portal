@@ -8,33 +8,45 @@ import { User } from '../models/user';
 @Component({
     selector: 'checkin',
     template: `
-       <div>
-            <label for="login">Логин</label>
-            <input name="login" [(ngModel)]="user.login"/>
-            <label for="password">Пароль</label>
-            <input name="password" type="password" [(ngModel)]="user.password"/>
-            <label for="password-repeat">Повторите пароль</label>
-            <input name="password-repeat" type="password" [(ngModel)]="user.passwordRepeat"/>
-            <label for="name">Ваше имя</label>
-            <input name="name" [(ngModel)]="user.name"/>
-            
-            <button class="btn btn-primary" (click)="sendData()">Войти</button>
-       </div>
+
+        <div class="col-md-6 col-md-offset-3 container-login">
+            <div class="panel panel-login">
+                <h2>Регистрация</h2>
+                <hr/>
+                <div class="form-horizontal panel-body">
+                    <div *ngIf="isError" class="alert alert-danger" role="alert">
+                        <button type="button" class="close" aria-label="Close" (click)="isError = false">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        Ошибка регистрации
+                    </div>
+                    <input class="form-control" placeholder="Логин" [(ngModel)]="user.login"/>                    
+                    <input type="password" class="form-control" placeholder="Пароль" [(ngModel)]="user.password"/>
+                    <input type="password" class="form-control" placeholder="Повторите пароль" [(ngModel)]="passwordRepeat"/>
+                    <input class="form-control" placeholder="Ваше имя" [(ngModel)]="user.name"/>
+                    <button class="btn btn-info col-xs-6 col-xs-offset-3" (click)="sendData()">Продолжить</button>
+                </div>
+            </div>
+        </div>
     `,
-    styles: [``]
+    styleUrls: ['./app/components/authorization.component.css']
 })
 export class CheckinComponent {
     user: User = new User();
+    passwordRepeat: string;
+    isError: boolean;
     constructor(
         private authService: AuthService,
         private router: Router
     ) {};
     sendData(): void {
-        this.authService.checkin(this.user).subscribe(() => {
+        this.authService.checkin(this.user).then(() => {
             if (this.authService.currentUser) {
                 let redirect = this.authService.redirectUrl;
                 this.router.navigate([redirect]);
             }
+        }).catch(()=> {
+            this.isError = true;
         });
     }
 }

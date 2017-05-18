@@ -1,0 +1,23 @@
+h2 {
+    text-align: center;
+}
+.container-login {
+    margin-top: 90px;
+}
+.panel-login {
+    border-color: #ccc;
+    box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+}
+input {
+    height: 45px;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+input + button {
+    height: 45px;
+}
+hr {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-top-width: 2px;
+}
