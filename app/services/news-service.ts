@@ -22,7 +22,7 @@ export class NewsService {
             .toPromise()
             .then(response => {
                 let arr = response.json().data as News[];
-                return arr.slice(from, to);
+                return arr.reverse().slice(from, to);
             })
             .catch(this.handleError);
     }

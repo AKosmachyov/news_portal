@@ -24,7 +24,7 @@ import { News } from '../models/news';
             margin-bottom: 0;
         }
         .preview-news {
-            margin-top: 16px;
+            margin: 16px 0;
         }
         a {
             cursor: pointer; 

@@ -19,6 +19,8 @@ import { NewsService } from './services/news-service';
 import { AuthService } from './services/auth.service';
 import { AuthGuard } from './services/auth-guard.service';
 
+import { NewsFilterPipe } from './pipes/news-filter.pipe';
+
 @NgModule({
     imports: [
         BrowserModule,
@@ -34,7 +36,8 @@ import { AuthGuard } from './services/auth-guard.service';
         DashboardComponent,
         EditorNewsComponent,
         LoginComponent,
-        CheckinComponent
+        CheckinComponent,
+        NewsFilterPipe
     ],
     bootstrap: [ AppComponent ],
     providers: [

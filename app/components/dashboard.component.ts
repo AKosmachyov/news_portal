@@ -7,11 +7,15 @@ import { NewsService } from '../services/news-service';
     selector: 'dashboard',
     template: `
         <div class="col-md-8 col-xs-8">
-            <preview-news *ngFor="let item of news" [news]="item"></preview-news>
-            <button class="btn btn-info" (click)="getMore()" *ngIf="!needMore">Загрузить ещё</button>
+            <preview-news *ngFor="let item of news | newsFilter: authorSearch: dateSearch" [news]="item"></preview-news>
+            <button class="btn btn-info col-xs-6 col-xs-offset-3" (click)="getMore()" *ngIf="!needMore">Загрузить ещё</button>
+            <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="isEndData">На этом новости закончились :(</h3>
         </div>
         <div class="col-md-4 col-xs-4">
-            search element
+            <span>Фильтрация</span>
+            <input placeholder="Автор" [(ngModel)]="authorSearch"/>
+            <input type="date" placeholder="Дата" [(ngModel)]="dateSearch"/>
+            <button class="btn btn-info" (click)="clearSearch()">Сбросить фильтры</button>
         </div>
     `
 })
@@ -20,6 +24,10 @@ export class DashboardComponent implements OnInit {
     from: number = 0;
     isDownload: boolean = false;
     needMore: boolean = false;
+    isEndData: boolean = false;
+
+    authorSearch: string;
+    dateSearch: Date;
     constructor( private newsService : NewsService ) { };
     ngOnInit(): void {
         this.next();
@@ -31,6 +39,11 @@ export class DashboardComponent implements OnInit {
     next(): void {
         this.isDownload = true;
         this.newsService.getNewsRange(this.from, this.from+5).then((arr) => {
+            if(arr.length == 0) {
+                this.isEndData = true;
+                this.isDownload = false;
+                return;
+            }
             this.news = this.news.concat(arr);
             this.from += 6;
             this.isDownload = false;
@@ -44,10 +57,12 @@ export class DashboardComponent implements OnInit {
             document.body.clientHeight, document.documentElement.clientHeight
         );
         let userSee = window.pageYOffset + document.documentElement.clientHeight;
-        if(elHeight - userSee < document.documentElement.clientHeight && !this.isDownload && this.needMore)
+        if(elHeight - userSee < document.documentElement.clientHeight && !this.isDownload && this.needMore && !this.isEndData)
         {
-            console.log('download');
             this.next();
         }
+    }
+    clearSearch () {
+        this.authorSearch = this.dateSearch = null;
     }
 }

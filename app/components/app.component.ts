@@ -13,15 +13,15 @@ import { User } from '../models/user';
                     <div class="col-md-4 col-xs-4">
                         logo
                     </div>
-                    <div class="col-md-4  col-md-offset-4 col-xs-6 normalize-height">                    
-                        <div *ngIf="!user; else userNavbar">
-                             <button class="btn btn-primary" [routerLink]="['/login']">Вход</button>                
-                             <button class="btn btn-primary" [routerLink]="['/checkin']">Регистрация</button>
+                    <div class="col-md-4 col-md-offset-4 col-xs-6 normalize-height">
+                        <div *ngIf="!user; else userNavbar" class="user-navbar">
+                             <button class="btn btn-info" [routerLink]="['/login']">Вход</button>                
+                             <button class="btn btn-info" [routerLink]="['/checkin']">Регистрация</button>
                         </div>
-                        <ng-template #userNavbar>
+                        <ng-template #userNavbar class="user-navbar">
                             <div>
-                                <button class="btn btn-primary" [routerLink]="['/editor']">Добавить</button>
-                                <button class="btn btn-primary" (click)="logout()">выйти</button>
+                                <button class="btn btn-info" [routerLink]="['/editor']">Добавить</button>
+                                <button class="btn btn-info" (click)="logout()">выйти</button>
                                 <span>{{user.name}}</span>
                             </div>
                         </ng-template>
@@ -41,6 +41,15 @@ import { User } from '../models/user';
         }
         .normalize-height {
             height: inherit;
+        }
+        .user-navbar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .user-navbar > button {
+            margin-left: 7px;
         }
     `]
 })
