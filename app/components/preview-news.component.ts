@@ -4,9 +4,12 @@ import { News } from '../models/news';
 @Component({
     selector: 'preview-news',
     template: `
-        <div class="preview-news" *ngIf="!!news">
-            <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
-            <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
+        <div class="preview-news well" *ngIf="!!news">
+            <span *ngIf="!news.modifiedDate">{{news.publicationDate | date:"dd.MM.yy"}}</span>
+            <span *ngIf="!!news.modifiedDate"><i class="glyphicon glyphicon-refresh"></i>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
+            <button type="button" (click)="news = null" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
             <h1 class="title">
                 <a [routerLink]="['/news', news.id]">{{news.title}}</a>
             </h1>
@@ -19,12 +22,15 @@ import { News } from '../models/news';
         </div>
     `,
     styles: [`
+        .well {
+            background-color: white;
+        }
         .title {
             margin-top: 0;
             margin-bottom: 0;
         }
         .preview-news {
-            margin: 16px 0;
+            margin: 9px 0;
         }
         a {
             cursor: pointer; 

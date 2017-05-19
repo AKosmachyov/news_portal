@@ -60,6 +60,10 @@ import { User } from '../models/user';
         .user-navbar > button {
             margin-left: 7px;
         }
+        button + span {
+            font-size: 20px;
+            padding-left: 9px;
+        }
     `]
 })
 

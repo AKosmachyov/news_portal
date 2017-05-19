@@ -9,7 +9,7 @@ import { NewsService } from '../services/news-service';
         <div class="col-md-8 col-xs-8">
             <preview-news *ngFor="let item of news | newsFilter: authorSearch: dateSearch" [news]="item"></preview-news>
             <img id="spinner" src="/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
-            <button class="btn btn-info col-xs-6 col-xs-offset-3" (click)="getMore()" *ngIf="!needMore && !isDownload">Загрузить ещё</button>
+            <button class="btn btn-info col-xs-6 col-xs-offset-3 get-more-button" (click)="getMore()" *ngIf="!needMore && !isDownload">Загрузить ещё</button>
             <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="isEndData">На этом новости закончились :(</h3>
         </div>
         <div class="col-md-4 col-xs-4">
@@ -24,6 +24,15 @@ import { NewsService } from '../services/news-service';
                 <div class="form-group">
                     <button class="btn btn-info center-block" (click)="clearSearch()">Сбросить фильтры</button>
                 </div>
+                <h3 class="form-group">Загружать новости по:</h3>
+                <div class="form-group">
+                    <select class="form-control" (change)="onChange($event.target.value)">
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option selected="selected">5</option>
+                    </select>
+                </div>
             </div>
         </div>
     `,
@@ -36,6 +45,10 @@ import { NewsService } from '../services/news-service';
         .form-horizontal > h3 {
             text-align: center;
         }
+        .get-more-button {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
     `]
 })
 export class DashboardComponent implements OnInit {
@@ -45,6 +58,7 @@ export class DashboardComponent implements OnInit {
     needMore: boolean = false;
     isEndData: boolean = false;
 
+    downloadNextTime: number = 5;
     authorSearch: string;
     dateSearch: Date;
     constructor( private newsService : NewsService ) { };
@@ -57,7 +71,7 @@ export class DashboardComponent implements OnInit {
     }
     next(): void {
         this.isDownload = true;
-        this.newsService.getNewsRange(this.from, this.from+5).then((arr) => {
+        this.newsService.getNewsRange(this.from, this.from + this.downloadNextTime).then((arr) => {
             if(arr.length == 0) {
                 this.isEndData = true;
                 this.isDownload = false;
@@ -83,5 +97,8 @@ export class DashboardComponent implements OnInit {
     }
     clearSearch () {
         this.authorSearch = this.dateSearch = null;
+    }
+    onChange( value ) {
+        this.downloadNextTime = value;
     }
 }
