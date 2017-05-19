@@ -25,6 +25,12 @@ import { News } from '../models/news';
         .well {
             background-color: white;
         }
+        .close {
+            visibility: collapse;
+        }
+        .well:hover .close {
+            visibility: visible;
+        }
         .title {
             margin-top: 0;
             margin-bottom: 0;

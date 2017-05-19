@@ -12,11 +12,13 @@ import { News } from '../models/news';
     selector: 'news',
     template: `
         <div *ngIf="!!news">
-            <span>{{news.publicationDate | date:"dd.MM.yy"}}</span>
-            <span>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
+            <span *ngIf="!news.modifiedDate">{{news.publicationDate | date:"dd.MM.yy"}}</span>
+            <span *ngIf="!!news.modifiedDate">
+                <i class="glyphicon glyphicon-refresh"></i>{{news.modifiedDate | date:"dd.MM.yy"}}
+            </span>
             <a *ngIf="displayEditButton" [routerLink]="['/editor', news.id]">
-                <i class="glyphicon glyphicon-pencil"></i>
                 Изменить
+                <i class="glyphicon glyphicon-pencil"></i>
             </a>
             <h1 class="title">
                 {{news.title}}
@@ -39,6 +41,9 @@ import { News } from '../models/news';
         .content {
             font-size: 16px;
             line-height: 160%;    
+        }
+        a {
+            text-decoration: none;
         }
     `]
 })
