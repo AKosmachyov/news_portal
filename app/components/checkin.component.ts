@@ -39,7 +39,20 @@ export class CheckinComponent {
         private authService: AuthService,
         private router: Router
     ) {};
+    checkDate(): boolean {
+        if(this.user.login && this.user.name && this.user.password) {
+            this.user.login = this.user.login.trim();
+            this.user.name = this.user.name.trim();
+            if (this.user.login && this.user.password == this.passwordRepeat)
+                return true;
+        }
+        return false;
+    }
     sendData(): void {
+        if(!this.checkDate()) {
+            this.isError = true;
+            return;
+        }
         this.authService.checkin(this.user).then(() => {
             if (this.authService.currentUser) {
                 let redirect = this.authService.redirectUrl;

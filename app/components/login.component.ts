@@ -36,7 +36,20 @@ export class LoginComponent {
         private authService: AuthService,
         private router: Router
     ) {};
+    checkData(): boolean {
+        if(this.login && this.password){
+            this.login = this.login.trim();
+            this.password = this.password.trim();
+            if(this.login && this.password)
+                return true;
+        }
+        return false;
+    }
     sendData(): void {
+        if(!this.checkData()) {
+            this.isError = true;
+            return;
+        }
         this.authService.login(this.login, this.password).then(() => {
             if (this.authService.currentUser) {
                 let redirect = this.authService.redirectUrl;
