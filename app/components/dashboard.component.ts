@@ -8,16 +8,35 @@ import { NewsService } from '../services/news-service';
     template: `
         <div class="col-md-8 col-xs-8">
             <preview-news *ngFor="let item of news | newsFilter: authorSearch: dateSearch" [news]="item"></preview-news>
-            <button class="btn btn-info col-xs-6 col-xs-offset-3" (click)="getMore()" *ngIf="!needMore">Загрузить ещё</button>
+            <img id="spinner" src="/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
+            <button class="btn btn-info col-xs-6 col-xs-offset-3" (click)="getMore()" *ngIf="!needMore && !isDownload">Загрузить ещё</button>
             <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="isEndData">На этом новости закончились :(</h3>
         </div>
         <div class="col-md-4 col-xs-4">
-            <span>Фильтрация</span>
-            <input placeholder="Автор" [(ngModel)]="authorSearch"/>
-            <input type="date" placeholder="Дата" [(ngModel)]="dateSearch"/>
-            <button class="btn btn-info" (click)="clearSearch()">Сбросить фильтры</button>
+            <div class="form-horizontal">
+                <h3 class="form-group">Фильтрация</h3>
+                <div class="form-group">
+                    <input class="form-control" placeholder="Автор" [(ngModel)]="authorSearch"/>
+                </div>
+                <div class="form-group">
+                    <input type="date" class="form-control" placeholder="Дата" [(ngModel)]="dateSearch"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-info center-block" (click)="clearSearch()">Сбросить фильтры</button>
+                </div>
+            </div>
         </div>
-    `
+    `,
+    styles: [`
+        #spinner {
+            height: 62px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .form-horizontal > h3 {
+            text-align: center;
+        }
+    `]
 })
 export class DashboardComponent implements OnInit {
     news: News[] = [];

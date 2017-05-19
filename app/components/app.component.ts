@@ -11,15 +11,17 @@ import { User } from '../models/user';
             <div class="container normalize-height">
                 <div class="row normalize-height">
                     <div class="col-md-4 col-xs-4">
-                        logo
+                        <h2>
+                            <a [routerLink]="['/dashboard']">News portal</a>
+                        </h2>
                     </div>
                     <div class="col-md-4 col-md-offset-4 col-xs-6 normalize-height">
                         <div *ngIf="!user; else userNavbar" class="user-navbar">
                              <button class="btn btn-info" [routerLink]="['/login']">Вход</button>                
                              <button class="btn btn-info" [routerLink]="['/checkin']">Регистрация</button>
                         </div>
-                        <ng-template #userNavbar class="user-navbar">
-                            <div>
+                        <ng-template #userNavbar>
+                            <div class="user-navbar">
                                 <button class="btn btn-info" [routerLink]="['/editor']">Добавить</button>
                                 <button class="btn btn-info" (click)="logout()">выйти</button>
                                 <span>{{user.name}}</span>
@@ -34,6 +36,13 @@ import { User } from '../models/user';
         </div>                
     `,
     styles: [`
+        a {
+            font-size: 30px;
+            color: #5bc0de;
+            cursor: pointer;
+            -webkit-user-select: none;
+            text-decoration: none;
+        }
         header {
             height: 68px;
             border-bottom: 1px solid #d5dddf;
