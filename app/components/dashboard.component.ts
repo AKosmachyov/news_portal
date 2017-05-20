@@ -60,7 +60,7 @@ export class DashboardComponent implements OnInit {
 
     downloadNextTime: number = 5;
     authorSearch: string;
-    dateSearch: Date;
+    dateSearch: string;
     constructor( private newsService : NewsService ) { };
     ngOnInit(): void {
         this.next();
