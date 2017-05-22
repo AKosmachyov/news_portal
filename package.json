@@ -4,8 +4,8 @@
   "description": "",
   "license": "MIT",
   "scripts": {
-    "start": "concurrent \"npm run tsc:w\" \"npm run lite\" ",
-    "lite": "lite-server",
+    "start": "concurrent \"npm run tsc:w\" \"node server/bin/www news-app\" ",
+    "stop": "killall node",
     "tsc": "tsc",
     "tsc:w": "tsc -w"
   },
@@ -24,11 +24,19 @@
     "core-js": "^2.4.1",
     "rxjs": "5.0.1",
     "zone.js": "^0.8.4",
-    "bootstrap ": "~3.3.7"
+    "bootstrap ": "~3.3.7",
+
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "morgan": "~1.8.1",
+    "ejs": "~2.3",
+    "serve-favicon": "~2.4.2",
+    "mongodb": "^2.2.26"
   },
   "devDependencies": {
     "concurrently": "^3.2.0",
-    "lite-server": "^2.2.2",
     "typescript": "~2.1.0"
   }
 }

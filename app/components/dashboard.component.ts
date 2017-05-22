@@ -8,7 +8,7 @@ import { NewsService } from '../services/news-service';
     template: `
         <div class="col-md-8 col-xs-8">
             <preview-news *ngFor="let item of news | newsFilter: authorSearch: dateSearch" [news]="item"></preview-news>
-            <img id="spinner" src="/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
+            <img id="spinner" src="app/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
             <button class="btn btn-info col-xs-6 col-xs-offset-3 get-more-button" (click)="getMore()" *ngIf="!needMore && !isDownload">Загрузить ещё</button>
             <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="isEndData">На этом новости закончились :(</h3>
         </div>
