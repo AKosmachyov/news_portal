@@ -40,6 +40,19 @@ class DataBase {
             })
         });
     }
+    getNewsByRange(from, to) {
+        let count = to - from + 1;
+        let skip = from == 0 ? 0 : --from;
+        return new Promise((resolve, reject) => {
+            this.newsCollection.find().skip(skip).limit(count).toArray((err,arr) => {
+                if(err) {
+                    reject(err);
+                    return;
+                }
+                resolve(arr);
+            })
+        });
+    }
 }
 
 module.exports = new DataBase();

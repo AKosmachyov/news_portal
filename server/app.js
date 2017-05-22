@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 const profile = require('./routes/profile');
+const news = require('./routes/news');
 
 const app = express();
 
@@ -24,7 +25,9 @@ app.use(cookieParser());
 app.get('/', function(req, res) {
     res.sendFile('index.html', { root: './app' });
 });
+
 app.use('/profile', profile);
+app.use('/news', news);
 
 app.get('*', function (req, res, next) {
     res.sendFile('index.html', { root: './app' });
