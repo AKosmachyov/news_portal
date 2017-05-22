@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
+
+import 'rxjs/add/operator/toPromise';
 
 import { User } from '../models/user';
 
@@ -6,31 +9,31 @@ import { User } from '../models/user';
 export class AuthService {
     currentUser: User;
     redirectUrl: string = '/dashboard';
-    users: User[] = [{
-        id:1,
-        login: 'qwe@gmail.com',
-        password: 'qwe',
-        name: 'test'
-    }];
+    constructor ( private http: Http ) {}
+
     login (login: string, password: string): Promise<User> {
-        return this.findUser(login, password).then((user) => this.currentUser = user);
+        let user = {
+            login: login,
+            password: password
+        };
+        return this.http.post('profile/login', user)
+            .toPromise()
+            .then(response => {
+                //TODO login
+                let newUser = new User();
+                newUser.name = response.json().data as string;
+                return this.currentUser = newUser;
+            });
     }
     checkin (user: User): Promise<User> {
-        this.users.push(user);
-        this.currentUser = user;
-        return Promise.resolve(user);
+        return this.http.post('profile/checkin', user)
+            .toPromise()
+            .then(response => {
+                user.password = null;
+                return this.currentUser = user;
+            });
     }
     logout (): void {
         this.currentUser = undefined;
-    }
-    findUser(login, password):Promise<User> {
-        return new Promise((resolve, reject) => {
-            for(let i=0; i < this.users.length; i++) {
-                if(this.users[i].login == login && this.users[i].password == password) {
-                    resolve(this.users[i]);
-                }
-            }
-            reject();
-        })
     }
 }

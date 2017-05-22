@@ -26,7 +26,7 @@ import { NewsFilterPipe } from './pipes/news-filter.pipe';
         BrowserModule,
         FormsModule,
         HttpModule,
-        InMemoryWebApiModule.forRoot(InMemoryDataService),
+        //InMemoryWebApiModule.forRoot(InMemoryDataService),
         AppRoutingModule
     ],
     declarations: [

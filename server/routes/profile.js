@@ -7,6 +7,7 @@ router.post('/login', function(req, res, next) {
         res.send('User entity is incorrect', 400);
         return;
     }
+    req.body.login = req.body.login.toLowerCase();
     dataBase.logIn(req.body).then((name)=>{
         res.json({name: name});
     }).catch((err)=> {
@@ -18,6 +19,7 @@ router.post('/checkin', function(req, res, next) {
         res.send('User entity is incorrect', 400);
         return;
     }
+    req.body.login = req.body.login.toLowerCase();
     dataBase.checkIn(req.body).then(()=>{
         res.send('success', 200);
     }).catch((err)=> {
