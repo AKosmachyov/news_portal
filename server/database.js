@@ -14,12 +14,20 @@ class DataBase {
         });
     }
     logIn (user) {
-
+        return new Promise((resolve, reject) => {
+            this.usersCollection.findOne(user, (err, data) => {
+                if (err || !data) {
+                    reject(err);
+                    return;
+                }
+                resolve(data.name);
+            })
+        });
     }
     checkIn (user) {
         return new Promise((resolve, reject) => {
             this.usersCollection.findOne(user, (err, data) => {
-                if(!err && data) {
+                if(err || data) {
                     reject(err);
                     return;
                 }
