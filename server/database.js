@@ -1,13 +1,14 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
-const assert = require('assert');
+const crypto = require('crypto');
 
 const url = 'mongodb://localhost:27017/news-portal';
 
 class DataBase {
     constructor() {
         MongoClient.connect(url, (err, db) => {
-            assert.equal(null, err);
+            if(err)
+                throw new Error("Can't connect to the database");
             console.log("Connected successfully to db");
             module.exports = db;
             this.usersCollection = db.collection('Users');
@@ -15,32 +16,31 @@ class DataBase {
         });
     }
 
-    logIn(user) {
-        return new Promise((resolve, reject) => {
-            this.usersCollection.findOne(user, (err, data) => {
-                if (err || !data) {
-                    reject(err);
-                    return;
-                }
-                resolve(data);
+    logInAsync(user) {
+        return this.usersCollection.findOne(user)
+            .then((user) => {
+                if (!user)
+                    return Promise.reject("The user name and password don't match");
+                return user;
             })
-        });
     }
 
-    checkIn(user) {
-        return new Promise((resolve, reject) => {
-            this.usersCollection.findOne(user, (err, data) => {
-                if (err || data) {
-                    reject(err);
-                    return;
-                }
-                this.usersCollection.insertOne(user, (err, data) => {
-                    if (err && data.insertedCount != 1) {
-                        reject(err);
-                    }
-                    resolve(data);
-                });
-            })
+    checkInAsync(user) {
+        var self = this;
+        return self.usersCollection.findOne(user)
+            .then((data) => {
+            if (data)
+                return Promise.reject('This login is already registered');
+            return;
+        }).then(() => {
+            return self.generateTokenAsync();
+        }).then((token) => {
+            user.token = token;
+            return self.usersCollection.insertOne(user);
+        }).then((data) => {
+            if (data.insertedCount != 1)
+                Promise.reject('Error');
+            return (data.ops[0]);
         });
     }
 
@@ -84,6 +84,15 @@ class DataBase {
                     return Promise.reject('News not found');
                 return;
             })
+    }
+    generateTokenAsync() {
+        return new Promise(function (resolve, reject) {
+            crypto.randomBytes(64, (err, buf) => {
+                if (err)
+                    reject(err);
+                resolve(buf.toString('hex'));
+            })
+        })
     }
 }
 

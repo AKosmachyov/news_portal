@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -9,7 +9,9 @@ import { User } from '../models/user';
 export class AuthService {
     currentUser: User;
     redirectUrl: string = '/dashboard';
-    constructor ( private http: Http ) {}
+    constructor ( private http: Http ) {
+        this.currentUser = this.restoreCredentialFromLS();
+    }
 
     login (login: string, password: string): Promise<User> {
         let user = {
@@ -19,12 +21,9 @@ export class AuthService {
         return this.http.post('api/profile/login', user)
             .toPromise()
             .then(response => {
-                //TODO login
                 let body = response.json();
-                let newUser = new User();
-                newUser.name = body.name;
-                newUser._id = body._id;
-                return this.currentUser = newUser;
+                this.setCredentialForLS(body);
+                return this.currentUser = body as User;
             });
     }
     checkin (user: User): Promise<User> {
@@ -34,10 +33,34 @@ export class AuthService {
                 user.password = null;
                 user.login = null;
                 user._id = response.json()._id;
+                user.token = response.json().token;
+                this.setCredentialForLS(user);
                 return this.currentUser = user;
             });
     }
     logout (): void {
         this.currentUser = undefined;
+        window.localStorage.clear();
+    }
+    getAuthorizationHeader () {
+        if (this.currentUser && this.currentUser.token)
+            return new Headers({ 'Authorization': `Basic ${this.currentUser.token}`});
+        return null;
+    }
+    setCredentialForLS(user: User) {
+        let ls = window.localStorage;
+        ls.setItem("token", user.token);
+        ls.setItem("name", user.name);
+        ls.setItem("_id", user._id);
+    }
+    restoreCredentialFromLS(): User {
+        let user: User = new User();
+        let ls = window.localStorage;
+        user.token = ls.getItem("token");
+        if(!user.token)
+            return null;
+        user._id = ls.getItem("_id");
+        user.name = ls.getItem("name");
+        return user;
     }
 }
