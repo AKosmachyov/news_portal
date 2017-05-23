@@ -16,20 +16,24 @@ export class AuthService {
             login: login,
             password: password
         };
-        return this.http.post('profile/login', user)
+        return this.http.post('api/profile/login', user)
             .toPromise()
             .then(response => {
                 //TODO login
+                let body = response.json();
                 let newUser = new User();
-                newUser.name = response.json().data as string;
+                newUser.name = body.name;
+                newUser._id = body._id;
                 return this.currentUser = newUser;
             });
     }
     checkin (user: User): Promise<User> {
-        return this.http.post('profile/checkin', user)
+        return this.http.post('api/profile/checkin', user)
             .toPromise()
             .then(response => {
                 user.password = null;
+                user.login = null;
+                user._id = response.json()._id;
                 return this.currentUser = user;
             });
     }

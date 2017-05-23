@@ -26,8 +26,8 @@ app.get('/', function(req, res) {
     res.sendFile('index.html', { root: './app' });
 });
 
-app.use('/profile', profile);
-app.use('/news', news);
+app.use('/api/profile', profile);
+app.use('/api/news', news);
 
 app.get('*', function (req, res, next) {
     res.sendFile('index.html', { root: './app' });

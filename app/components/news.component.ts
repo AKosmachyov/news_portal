@@ -16,7 +16,7 @@ import { News } from '../models/news';
             <span *ngIf="!!news.modifiedDate">
                 <i class="glyphicon glyphicon-refresh"></i>{{news.modifiedDate | date:"dd.MM.yy"}}
             </span>
-            <a *ngIf="displayEditButton" [routerLink]="['/editor', news.id]">
+            <a *ngIf="displayEditButton" [routerLink]="['/editor', news._id]">
                 Изменить
                 <i class="glyphicon glyphicon-pencil"></i>
             </a>
@@ -24,7 +24,7 @@ import { News } from '../models/news';
                 {{news.title}}
             </h1>
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
-                <i class="glyphicon glyphicon-user"></i><span>{{news.author}}</span>
+                <i class="glyphicon glyphicon-user"></i><span>{{news.author.name}}</span>
             <div>
                 <span class="content" [innerHTML]="news.content"></span>
             </div>
@@ -60,10 +60,10 @@ export class NewsComponent implements OnInit {
 
     ngOnInit(): void {
         this.route.params
-            .switchMap((params: Params) => this.newsService.getNews(+params['id']))
+            .switchMap((params: Params) => this.newsService.getNews(params['id']))
             .subscribe(news => {
                 this.news = news;
-                if(this.authService.currentUser && this.news.author == this.authService.currentUser.name)
+                if(this.authService.currentUser && this.news.author._id == this.authService.currentUser._id)
                     this.displayEditButton = true;
             });
     }

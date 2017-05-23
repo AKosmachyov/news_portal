@@ -21,7 +21,7 @@ export class NewsFilterPipe implements PipeTransform {
             }
             if (author) {
                 author = author.trim();
-                isAuthorFiltered = news.author.indexOf(author) > -1;
+                isAuthorFiltered = news.author.name.indexOf(author) > -1;
             }
             return isDateFiltered && isAuthorFiltered;
         });

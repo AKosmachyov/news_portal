@@ -11,13 +11,13 @@ import { News } from '../models/news';
                 <span aria-hidden="true">&times;</span>
             </button>
             <h1 class="title">
-                <a [routerLink]="['/news', news.id]">{{news.title}}</a>
+                <a [routerLink]="['/news', news._id]">{{news.title}}</a>
             </h1>
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
-                <i class="glyphicon glyphicon-user"></i><span>{{news.author}}</span>
+                <i class="glyphicon glyphicon-user"></i><span>{{news.author.name}}</span>
             <div>
                 <span class="content">{{news.titleContent}}</span>                
-                <a [routerLink]="['/news', news.id]">подробнее...</a>
+                <a [routerLink]="['/news', news._id]">подробнее...</a>
             </div>
         </div>
     `,

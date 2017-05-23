@@ -17,13 +17,29 @@ router.get('/', function(req, res, next) {
 
 });
 router.get('/:id', function(req, res, next) {
-    res.send('not ready');
+    dataBase.getNewsById(req.params.id).then(
+        (news) => res.json(news),
+        (err) => res.json(err)
+    );
 });
 router.post('/insert', function(req, res, next) {
+    if (!isValidNews(req.body)) {
+        res.send('Incorrect data', 400);
+        return;
+    }
+    req.body.publicationDate = new Date();
+    //TODO check author
+    dataBase.insertNews(req.body)
+        .then(
+            ()=> res.send('Success'),
+            ()=> res.send('News not added', 500)
+        );
+});
+router.post('/:id/modify', function(req, res, next) {
     res.send('not ready');
 });
-router.post('/modify', function(req, res, next) {
-    res.send('not ready');
-});
+function isValidNews(news) {
+    return !!news && news.title && news.titleContent && news.content && news.tag;
+}
 
 module.exports = router;

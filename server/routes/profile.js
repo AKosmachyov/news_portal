@@ -8,8 +8,11 @@ router.post('/login', function(req, res, next) {
         return;
     }
     req.body.login = req.body.login.toLowerCase();
-    dataBase.logIn(req.body).then((name)=>{
-        res.json({name: name});
+    dataBase.logIn(req.body).then((data)=>{
+        res.json({
+            name: data.name,
+            _id: data._id
+        });
     }).catch((err)=> {
         res.send("The user name and password don't match", 400);
     });
@@ -20,8 +23,8 @@ router.post('/checkin', function(req, res, next) {
         return;
     }
     req.body.login = req.body.login.toLowerCase();
-    dataBase.checkIn(req.body).then(()=>{
-        res.send('success', 200);
+    dataBase.checkIn(req.body).then((data)=>{
+        res.json({_id: data._id});
     }).catch((err)=> {
         res.send('This login is already registered.', 400);
     });

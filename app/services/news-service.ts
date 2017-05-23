@@ -11,37 +11,29 @@ export class NewsService {
 
     constructor( private http: Http ) { }
 
-    getNewsArr(): Promise<News[]> {
-        return this.http.get(this.newsUrl)
+    getNewsRange(from: number, to: number): Promise<News[]> {
+        return this.http.get(`api/news?from=${from}&to=${to}`)
             .toPromise()
-            .then(response => response.json().data as News[])
+            .then(response => response.json() as News[])
             .catch(this.handleError);
     }
-    getNewsRange(from: number, to: number): Promise<News[]> {
-        return this.http.get(this.newsUrl)
+    getNews(id: string): Promise<News> {
+        return this.http.get(`api/news/${id}`)
             .toPromise()
-            .then(response => {
-                let arr = response.json().data as News[];
-                return arr.reverse().slice(from, to);
+            .then(response => response.json() as News)
+            .catch(this.handleError);
+    }
+    addNews(news: News): Promise<string> {
+        return this.http
+            .post('api/news/insert', news)
+            .toPromise()
+            .then(res => {
+                return res.text();
             })
             .catch(this.handleError);
     }
-    getNews(id: number): Promise<News> {
-        const url = `${this.newsUrl}/${id}`;
-        return this.http.get(url)
-            .toPromise()
-            .then(response => response.json().data as News)
-            .catch(this.handleError);
-    }
-    addNews(news: News): Promise<News> {
-        return this.http
-            .post(this.newsUrl, JSON.stringify(news))
-            .toPromise()
-            .then(res => res.json().data as News)
-            .catch(this.handleError);
-    }
     update(news: News): Promise<News> {
-        const url = `${this.newsUrl}/${news.id}`;
+        const url = `${this.newsUrl}/${news._id}`;
         return this.http
             .put(url, JSON.stringify(news))
             .toPromise()

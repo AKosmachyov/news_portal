@@ -61,7 +61,7 @@ export class EditorNewsComponent {
     ) {
         this.route.params
             .switchMap((params: Params) => {
-                let id = +params['id'];
+                let id = params['id'];
                 if (id) {
                     return this.newsService.getNews(id);
                 } else {
@@ -74,12 +74,12 @@ export class EditorNewsComponent {
     add (): void {
         this.news.title = this.news.title.trim();
         this.news.tag = this.news.tag.trim();
-        this.news.publicationDate = new Date();
-        this.news.author = this.authService.currentUser.name;
-        this.newsService.addNews(this.news).then(() => this.location.back());
+        this.news.author = this.authService.currentUser;
+        this.newsService.addNews(this.news)
+            .then(() => this.location.back());
     }
     update ():void {
-        this.news.modifiedDate = new Date();
-        this.newsService.update(this.news).then(() => this.location.back());
+        this.newsService.update(this.news)
+            .then(() => this.location.back());
     }
 }
