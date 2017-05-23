@@ -28,33 +28,56 @@ router.get('/:id', function(req, res, next) {
             res.send(err, 404))
 });
 router.post('/insert', function(req, res, next) {
+    let token = checkToken(req.header('Authorization'));
+    if(!token){
+        res.send('Unauthorized ',401);
+        return;
+    }
     if (!isValidNews(req.body)) {
         res.send('Incorrect data', 400);
         return;
     }
-    req.body.publicationDate = new Date();
-    //TODO check author
-    dataBase.insertNewsAsync(req.body)
-        .then(()=>
-            res.send('Success')
-        ).catch(()=>
-            res.send('News not added', 400))
+    dataBase.getUserByTokenAsync(token)
+        .then((user) => {
+            let news = req.body;
+            news.publicationDate = new Date();
+            news.author = user;
+            return dataBase.insertNewsAsync(news)
+        }, () => res.send('Unauthorized ',401))
+        .then(() => res.send('Success'))
+        .catch(() => res.send('News not added', 400))
 });
 router.post('/:id/modify', function(req, res, next) {
-    //TODO check author
+    let token = checkToken(req.header('Authorization'));
+    if(!token){
+        res.send('Unauthorized ',401);
+        return;
+    }
     let id = req.params.id;
     if (!isValidNews(req.body) && !id) {
         res.send('Incorrect data', 400);
         return;
     }
-    req.body.modifiedDate = new Date();
-    dataBase.modifyNewsAsync(req.body)
-        .then(() =>
-            res.send('Success')
-        ).catch((err) =>
-            res.send(err, 400)
-        )
+    dataBase.getUserByTokenAsync(token)
+        .then((user) => {
+            let news = req.body;
+            if(news.author._id != user._id)
+                return Promise.resolve('Access is denied');
+            news.modifiedDate = new Date();
+            news.author = user;
+            return dataBase.modifyNewsAsync(news)
+        }, () => res.send('Unauthorized ',401))
+        .then(() => res.send('Success'))
+        .catch((err) => res.send(err, 400));
 });
+function checkToken(strToken) {
+    if(!strToken)
+        return false;
+    let token = strToken.split(' ')[1];
+    if(!token)
+        return false;
+    return token;
+}
 function isValidNews(news) {
     return !!news && news.title && news.titleContent && news.content && news.tag;
 }

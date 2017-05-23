@@ -85,6 +85,16 @@ class DataBase {
                 return;
             })
     }
+
+    getUserByTokenAsync(token) {
+        return this.usersCollection.findOne({token: token}, {name: 1})
+            .then((user)=> {
+                if(!user)
+                    return Promise.reject('User not found');
+                return user;
+            })
+    }
+
     generateTokenAsync() {
         return new Promise(function (resolve, reject) {
             crypto.randomBytes(64, (err, buf) => {
