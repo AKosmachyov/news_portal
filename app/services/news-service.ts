@@ -32,13 +32,11 @@ export class NewsService {
             })
             .catch(this.handleError);
     }
-    update(news: News): Promise<News> {
-        const url = `${this.newsUrl}/${news._id}`;
-        return this.http
-            .put(url, JSON.stringify(news))
+    update(news: News): Promise<string> {
+        return this.http.post(`api/news/${news._id}/modify`, news)
             .toPromise()
-            .then(() => news)
-            .catch(this.handleError);
+            .then((val) => val.text())
+            .catch(this.handleError)
     }
 
     private handleError(error: any): Promise<any> {

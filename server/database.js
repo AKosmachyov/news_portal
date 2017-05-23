@@ -44,44 +44,48 @@ class DataBase {
         });
     }
 
-    getNewsByRange(from, to) {
+    getNewsByRangeAsync(from, to) {
         let count = to - from + 1;
         let skip = from == 0 ? 0 : --from;
-        return new Promise((resolve, reject) => {
-            this.newsCollection.find().skip(skip).limit(count).toArray((err, arr) => {
-                if (err) {
-                reject(err);
-                    return;
-                }
-                resolve(arr);
-            })
-        })
+        return this.newsCollection.find().skip(skip).limit(count).toArray();
     }
 
-    getNewsById(id) {
-        return new Promise((resolve, reject) => {
-            //TODO check other options ObjectID
-            this.newsCollection.findOne({_id: new ObjectID(id)}, (err, news) => {
-                if (err || !news) {
-                    reject(err);
-                    return;
-                }
-                resolve(news);
+    getNewsByIdAsync(id) {
+        //TODO check other options
+        if (!ObjectID.isValid(id))
+            return Promise.reject('Bad id');
+        return this.newsCollection.findOne({_id: new ObjectID(id)})
+            .then((news) => {
+                if (!news)
+                    return Promise.reject('News not found');
+                return news;
             })
-        });
     }
 
-    insertNews(news) {
-        return new Promise((resolve, reject) => {
-            this.newsCollection.insertOne(news, (err, data) => {
-                if (err && data.insertedCount != 1) {
-                    reject(err);
-                    return;
-                }
-                resolve(data);
+    insertNewsAsync(news) {
+        return this.newsCollection.insertOne(news)
+            .then((data) => {
+                if (data.insertedCount != 1)
+                    return Promise.reject('News not added');
+                return data;
             })
-        })
+    }
+
+    modifyNewsAsync(news) {
+        let id = news._id;
+        delete news._id;
+        delete news.publicationDate;
+        if(!ObjectID.isValid(id))
+            return Promise.reject('Bad id');
+        //TODO using ObkectID
+        return this.newsCollection.findAndModify({_id: new ObjectID(id)}, [], {$set: news})
+            .then((data) => {
+                if (!data.lastErrorObject.updatedExisting)
+                    return Promise.reject('News not found');
+                return;
+            })
     }
 }
+
 
 module.exports = new DataBase();

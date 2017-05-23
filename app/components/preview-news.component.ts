@@ -39,13 +39,17 @@ import { News } from '../models/news';
             margin: 9px 0;
         }
         a {
-            cursor: pointer; 
+            cursor: pointer;
+            text-decoration: none;
         }
         i {
             margin-right: 8px;
         }
         .content {
             word-wrap: break-word;
+        }
+        h1 {
+            font-size: 29px;
         }
     `]
 })

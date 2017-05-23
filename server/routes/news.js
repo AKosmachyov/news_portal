@@ -9,18 +9,23 @@ router.get('/', function(req, res, next) {
         res.send('Incorrect range', 400);
         return;
     }
-    dataBase.getNewsByRange(from, to).then((data)=>{
+    dataBase.getNewsByRangeAsync(from, to).then((data)=>{
         res.json(data);
     }).catch(()=>{
-        res.send('Err');
+        res.send('Error');
     });
 
 });
 router.get('/:id', function(req, res, next) {
-    dataBase.getNewsById(req.params.id).then(
-        (news) => res.json(news),
-        (err) => res.json(err)
-    );
+    if (!req.params.id) {
+        res.send('Incorrect data', 400);
+        return;
+    }
+    dataBase.getNewsByIdAsync(req.params.id)
+        .then((news) =>
+            res.json(news)
+        ).catch((err) =>
+            res.send(err, 404))
 });
 router.post('/insert', function(req, res, next) {
     if (!isValidNews(req.body)) {
@@ -29,14 +34,26 @@ router.post('/insert', function(req, res, next) {
     }
     req.body.publicationDate = new Date();
     //TODO check author
-    dataBase.insertNews(req.body)
-        .then(
-            ()=> res.send('Success'),
-            ()=> res.send('News not added', 500)
-        );
+    dataBase.insertNewsAsync(req.body)
+        .then(()=>
+            res.send('Success')
+        ).catch(()=>
+            res.send('News not added', 400))
 });
 router.post('/:id/modify', function(req, res, next) {
-    res.send('not ready');
+    //TODO check author
+    let id = req.params.id;
+    if (!isValidNews(req.body) && !id) {
+        res.send('Incorrect data', 400);
+        return;
+    }
+    req.body.modifiedDate = new Date();
+    dataBase.modifyNewsAsync(req.body)
+        .then(() =>
+            res.send('Success')
+        ).catch((err) =>
+            res.send(err, 400)
+        )
 });
 function isValidNews(news) {
     return !!news && news.title && news.titleContent && news.content && news.tag;
