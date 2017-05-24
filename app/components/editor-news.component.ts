@@ -74,7 +74,6 @@ export class EditorNewsComponent {
     add (): void {
         this.news.title = this.news.title.trim();
         this.news.tag = this.news.tag.trim();
-        this.news.author = this.authService.currentUser;
         this.newsService.addNews(this.news)
             .then(() => this.location.back());
     }

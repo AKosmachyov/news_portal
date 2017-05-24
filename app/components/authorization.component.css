@@ -21,3 +21,12 @@ hr {
     margin-bottom: 0;
     border-top-width: 2px;
 }
+input.ng-touched.ng-invalid {
+    border-color: #a94442;
+}
+input.ng-touched.ng-valid {
+    border-color: #3c763d;
+}
+button[disabled] {
+    cursor: pointer;
+}

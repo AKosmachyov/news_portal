@@ -9,7 +9,6 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class NewsService {
-    private newsUrl = 'api/news';
     constructor(
         private http: Http,
         private authService: AuthService
