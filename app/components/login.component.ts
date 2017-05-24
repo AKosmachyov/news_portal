@@ -22,10 +22,15 @@ import { AuthService } from '../services/auth.service';
                     <input class="form-control" placeholder="Логин"
                            type="email" required email name="login"
                            [(ngModel)]="user.login" autocomplete="off">
-                                          
-                    <input type="password" class="form-control"
-                           placeholder="Пароль" required minlength="8" #password="ngModel"
-                           maxlength="24" name="password" [(ngModel)]="user.password">
+
+                    <div class="password-block">
+                         <input class="form-control" placeholder="Пароль" required
+                           name="password" minlength="8" maxlength="24" #password="ngModel"
+                           [(ngModel)]="user.password" [(type)]="passwordInputType">
+                        <i *ngIf="user.password" (mousedown)="showPassword(true)" (mouseup)="showPassword(false)"
+                            class="glyphicon glyphicon-eye-open">
+                        </i>
+                    </div>
                     <div *ngIf="password.errors && (password.dirty || password.touched)" class="alert alert-danger">
                         <div [hidden]="!(password.errors.minlength || password.errors.required)">
                             Пароль должен состоят минимум из 8 символов
@@ -45,6 +50,7 @@ export class LoginComponent {
     user:User = new User();
     isError: boolean;
     errorStr: string;
+    passwordInputType: string = 'password';
     constructor(
         private authService: AuthService,
         private router: Router
@@ -63,5 +69,8 @@ export class LoginComponent {
             }
             this.isError = true;
         })
+    }
+    showPassword(flag: boolean){
+        this.passwordInputType = flag ? "text" : "password";
     }
 }
