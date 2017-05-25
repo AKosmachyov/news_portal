@@ -27,7 +27,6 @@ import { NewsService } from '../services/news-service';
                 <h3 class="form-group">Загружать новости по:</h3>
                 <div class="form-group">
                     <select class="form-control" (change)="onChange($event.target.value)">
-                        <option>2</option>
                         <option>3</option>
                         <option>4</option>
                         <option selected="selected">5</option>
@@ -71,26 +70,29 @@ export class DashboardComponent implements OnInit {
     }
     next(): void {
         this.isDownload = true;
-        this.newsService.getNewsRange(this.from, this.from + this.downloadNextTime).then((arr) => {
+        this.newsService.getNewsRange(this.from, this.from - 1 + +this.downloadNextTime).then((arr) => {
             if(arr.length == 0) {
                 this.isEndData = true;
                 this.isDownload = false;
                 return;
             }
             this.news = this.news.concat(arr);
-            this.from += 6;
+            this.from += +this.downloadNextTime;
             this.isDownload = false;
         });
     }
+    @HostListener('click', ['$event.target'])
     @HostListener('window:scroll', ['$event'])
     onScroll(event): void {
+        if(!(event.tagName == "SPAN" && event.innerText == "×" || event.type == "scroll"))
+            return;
         let elHeight = Math.max(
             document.body.scrollHeight, document.documentElement.scrollHeight,
             document.body.offsetHeight, document.documentElement.offsetHeight,
             document.body.clientHeight, document.documentElement.clientHeight
         );
         let userSee = window.pageYOffset + document.documentElement.clientHeight;
-        if(elHeight - userSee < document.documentElement.clientHeight && !this.isDownload && this.needMore && !this.isEndData)
+        if(elHeight == userSee && !this.isDownload && this.needMore && !this.isEndData)
         {
             this.next();
         }

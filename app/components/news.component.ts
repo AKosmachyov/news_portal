@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Location } from '@angular/common';
+
 import 'rxjs/add/operator/switchMap';
 
 import { NewsService } from '../services/news-service';
@@ -29,6 +29,12 @@ import { News } from '../models/news';
                 <span class="content" [innerHTML]="news.content"></span>
             </div>
         </div>
+         <div *ngIf="displayError">
+                <h1 class="err-block">{{errorStr}}</h1>
+                <button class="btn btn-info center-block" [routerLink]="['/dashboard']">Возвращаемся</button>
+         </div>      
+         <div>
+         <img id="spinner" src="app/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
     `,
     styles: [`
         .title {
@@ -45,26 +51,47 @@ import { News } from '../models/news';
         a {
             text-decoration: none;
         }
+        .err-block {
+            color: #5bc0de;
+            text-align: center;
+        }
+         #spinner {
+            height: 62px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
     `]
 })
 
 export class NewsComponent implements OnInit {
+    isDownload: boolean = false;
     news: News;
     displayEditButton: boolean = false;
+    displayError: boolean = false;
+    errorStr: string;
     constructor(
         private newsService: NewsService,
         private authService: AuthService,
-        private route: ActivatedRoute,
-        private location: Location
+        private route: ActivatedRoute
     ) {}
 
     ngOnInit(): void {
+        this.isDownload = true;
         this.route.params
             .switchMap((params: Params) => this.newsService.getNews(params['id']))
             .subscribe(news => {
+                this.isDownload = false;
                 this.news = news;
-                if(this.authService.currentUser && this.news.author._id == this.authService.currentUser._id)
+                if(this.authService.currentUser && news.author._id == this.authService.currentUser._id)
                     this.displayEditButton = true;
+            }, (err) => {
+                this.isDownload = false;
+                if(!err.status) {
+                    this.errorStr = 'Отсутствует подключение к сети Интернет';
+                } else {
+                    this.errorStr = '404 Данная страница не найдена';
+                }
+                this.displayError = true;
             });
     }
 }

@@ -24,7 +24,7 @@ import { User } from '../models/user';
                             <div class="user-navbar">
                                 <button class="btn btn-info" [routerLink]="['/editor']">Добавить</button>
                                 <button class="btn btn-info" (click)="logout()">выйти</button>
-                                <span>{{user.name}}</span>
+                                <span class="user-name">{{user.name}}</span>
                             </div>
                         </ng-template>
                     </div>
@@ -63,6 +63,11 @@ import { User } from '../models/user';
         button + span {
             font-size: 20px;
             padding-left: 9px;
+        }
+        .user-name {
+            max-width: 160px;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
     `]
 })

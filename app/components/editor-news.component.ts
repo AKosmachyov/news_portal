@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
-import 'rxjs/add/operator/switchMap';
 
 import { News } from '../models/news';
 
@@ -11,18 +10,29 @@ import { NewsService } from '../services/news-service';
 @Component({
     selector: 'editor-news',
     template: `
-         <div class="col-md-8 col-md-offset-2">
+         <form class="col-md-8 col-md-offset-2" #userForm="ngForm" *ngIf="!!news">
             <label for="title">Заголовок</label>
-            <input name="title" class="form-control" [(ngModel)]="news.title"/>
+            <input name="title" class="form-control" [(ngModel)]="news.title" required
+                   minlength="1" maxlength="100" autocomplete="off"/>
+                   
             <label for="tag">Тэг</label>
-            <input name="tag" class="form-control" [(ngModel)]="news.tag"/>
+            <input name="tag" class="form-control" [(ngModel)]="news.tag" required
+                   minlength="1" maxlength="100" autocomplete="off"/>
+            
             <label for="titleContent">Краткое описание</label>
-            <textarea name="titleContent" cols="30" rows="4" class="form-control" [(ngModel)]="news.titleContent"></textarea>
+            <textarea name="titleContent" cols="30" rows="4" class="form-control" [(ngModel)]="news.titleContent"
+                      required minlength="1" maxlength="200" autocomplete="off"></textarea>
+                      
             <label for="content">Текст</label>
-            <textarea name="content" cols="30" rows="15" class="form-control" [(ngModel)]="news.content"></textarea>
-            <button class="btn btn-info" (click)="add()" *ngIf="isChange">Добавить</button>
-            <button class="btn btn-info" (click)="update()" *ngIf="!isChange">Изменить</button>
-         </div>
+            <textarea name="content" cols="30" rows="15" class="form-control" [(ngModel)]="news.content"
+                      required minlength="1" autocomplete="off"></textarea>
+            
+            <button class="btn btn-info" (click)="submit()" [disabled]="!userForm.valid">{{buttonText}}</button>
+         </form>
+         <form *ngIf="displayError">
+                <h1 class="err-block">{{errorStr}}</h1>
+                <button class="btn btn-info center-block" [routerLink]="['/dashboard']">Возвращаемся</button>
+         </form>     
     `,
     styles: [`
         div {
@@ -31,7 +41,7 @@ import { NewsService } from '../services/news-service';
         }
         textarea {
             resize: none;
-            padding: 15px 15px 0px;
+            padding: 15px 15px 0;
         }
         input {
             padding: 0 8px;
@@ -43,42 +53,92 @@ import { NewsService } from '../services/news-service';
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
         }
-        button {
+        textarea + button {
             border-top-left-radius: 0;
             border-top-right-radius: 0;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .ng-touched.ng-invalid {
+           border-color: #a94442;
+        }
+        .ng-touched.ng-valid {
+            border-color: #3c763d;
+        }
+        button[disabled] {
+            cursor: pointer;
+        }
+        .err-block {
+            color: #5bc0de;
+            text-align: center;
+        }
+        .err-block + button {
+                width: 40%;
+                font-size: 16px;
         }
     `]
 })
 
 export class EditorNewsComponent {
-    news: News = new News();
+    news: News;
     isChange: boolean = false;
+    buttonText: string = 'Добавить';
+    displayError: boolean = false;
+    errorStr: string;
     constructor (
         private newsService : NewsService,
         private authService: AuthService,
-        private route: ActivatedRoute,
+        private activateRoute: ActivatedRoute,
         private location : Location
     ) {
-        this.route.params
-            .switchMap((params: Params) => {
-                let id = params['id'];
-                if (id) {
-                    return this.newsService.getNews(id);
-                } else {
-                    this.isChange = true;
-                    return Promise.resolve(new News());
-                }
-            })
-            .subscribe(news => this.news = news);
+        let id = activateRoute.snapshot.params['id'];
+        if (id) {
+            const _self = this;
+            _self.isChange = true;
+            _self.newsService.getNews(id).then((news) => {
+                if(news.author._id != _self.authService.currentUser._id)
+                    return Promise.reject({text: 'Different id', status: 403});
+                _self.news = news;
+            }).catch(this.handleError.bind(_self));
+        } else {
+            this.news = new News();
+        }
     };
-    add (): void {
-        this.news.title = this.news.title.trim();
-        this.news.tag = this.news.tag.trim();
-        this.newsService.addNews(this.news)
+
+    add(): Promise<any> {
+        return this.newsService.addNews(this.news)
             .then(() => this.location.back());
     }
-    update ():void {
-        this.newsService.update(this.news)
+
+    update(): Promise<any>  {
+        return this.newsService.update(this.news)
             .then(() => this.location.back());
+    }
+
+    submit() {
+        if(!this.isValidFields())
+            return;
+        let func = this.isChange ? this.update : this.add;
+        func = func.bind(this);
+        func().catch(this.handleError);
+    }
+
+    isValidFields() {
+        this.news.title = this.news.title ? this.news.title.trim() : '';
+        this.news.titleContent = this.news.titleContent ? this.news.titleContent.trim() : '';
+        this.news.content = this.news.content ? this.news.content.trim() : '';
+        this.news.tag = this.news.tag ? this.news.tag.trim() : '';
+        return this.news.title && this.news.titleContent && this.news.content && this.news.tag;
+    }
+
+    handleError(err) {
+        console.log(err);
+        if(!err.status)
+            this.errorStr = 'Отсутствует подключение к сети Интернет';
+        if(err.status == "404")
+            this.errorStr = 'Запрашиваемая статья отсутствует';
+        if(err.status == "403")
+                this.errorStr = 'Данная статья принадлежит другому пользователю';
+        this.displayError = true;
     }
 }
