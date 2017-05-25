@@ -1,48 +1,68 @@
 const express = require('express');
 const router = express.Router();
 const dataBase = require('../database');
+const validationService = require('../validationService');
 
 router.post('/login', function(req, res, next) {
-    if (!isValidUserLogin(req.body)) {
+    const user = validationService.createUserForLogIn(req.body);
+    if (!user) {
         res.send('User entity is incorrect', 400);
         return;
     }
-    req.body.login = req.body.login.toLowerCase();
-
-    dataBase.logInAsync(req.body).then((user)=>{
-        res.json({
-            name: user.name,
-            _id: user._id,
-            token: user.token
-        });
-    }).catch((err)=> {
-        res.send("The user name and password don't match", 400);
+    dataBase.getUserByQueryAsync(user)
+        .then((data) => {
+            if(!data)
+                return Promise.reject("The user name and password don't match");
+            user._id = data._id;
+            user.name = data.name;
+            return dataBase.generateTokenAsync();
+        }).then((token) => {
+            return dataBase.insertTokenAsync(user._id, token);
+        }).then((status) => {
+            if(status.insertedCount != 1)
+                return Promise.reject("Server error");
+            res.send({
+                _id: status.ops[0].userId,
+                token: status.ops[0].token,
+                name: user.name
+            })
+        }).catch((error) => {
+            let err = new Error(error);
+            err.status = 400;
+            next(err);
     });
 });
+
 router.post('/checkin', function(req, res, next) {
-    if (!isValidUserCheckIn(req.body)) {
+    const user = validationService.createUserForCheckIn(req.body);
+    if (!user) {
         res.send('User entity is incorrect', 400);
         return;
     }
-    req.body.login = req.body.login.toLowerCase();
-
-    dataBase.checkInAsync(req.body).then((user)=>{
-        res.json({
-            _id: user._id,
-            token: user.token
-        });
-    }).catch((err)=> {
-        res.send(err, 400);
-    });
+    dataBase.getUserByQueryAsync({login: user.login})
+        .then((data) => {
+            if(data)
+                return Promise.reject('This user is already exist');
+            return dataBase.checkInAsync(user);
+        }).then((status) => {
+            if(status.insertedCount != 1)
+                return Promise.reject("Server error");
+            user._id = status.ops[0]._id;
+            return dataBase.generateTokenAsync();
+        }).then((token) => {
+            return dataBase.insertTokenAsync(user._id, token)
+        }).then((status) => {
+            if(status.insertedCount != 1)
+                return Promise.reject("Server error");
+            res.send({
+                _id: status.ops[0].userId,
+                token: status.ops[0].token
+            })
+        }).catch((error) => {
+            let err = new Error(error);
+            err.status = 400;
+            next(err);
+    })
 });
-function isValidUserCheckIn(user) {
-    return (user && isValidLogin(user.login) && user.name && user.password);
-}
-function isValidUserLogin(user){
-    return (user && isValidLogin(user.login) && user.password)
-}
-function isValidLogin(login) {
-    return (/\S+@\S+\.\S+/).test(login);
-}
 
 module.exports = router;

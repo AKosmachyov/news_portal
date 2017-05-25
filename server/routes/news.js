@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const dataBase = require('../database');
+const validationService = require('../validationService');
 
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     let from = parseInt(req.query.from, 10);
     let to = parseInt(req.query.to, 10);
     if(isNaN(from) || isNaN(to) || from >= to || from < 0 || to < 0) {
@@ -11,75 +12,96 @@ router.get('/', function(req, res, next) {
     }
     dataBase.getNewsByRangeAsync(from, to).then((data)=>{
         res.json(data);
-    }).catch(()=>{
+    }).catch((err)=>{
         res.send('Error');
     });
 
 });
-router.get('/:id', function(req, res, next) {
+
+router.get('/:id', function(req, res) {
     if (!req.params.id) {
         res.send('Incorrect data', 400);
         return;
     }
-    dataBase.getNewsByIdAsync(req.params.id)
-        .then((news) =>
+    const newsId = req.params.id;
+    dataBase.generateObjectIdAsync(newsId)
+        .then((id) => {
+            return dataBase.getNewsByQueryAsync({_id:id});
+        }).then((news) =>
             res.json(news)
         ).catch((err) =>
             res.send(err, 404))
 });
+
 router.post('/insert', function(req, res, next) {
-    let token = checkToken(req.header('Authorization'));
-    if(!token){
-        res.send('Unauthorized ',401);
+    const token = validationService.checkTokeninHeader(req.header('Authorization'));
+    if (!token) {
+        res.send('Unauthorized ', 401);
         return;
     }
-    if (!isValidNews(req.body)) {
+    const news = validationService.createNews(req.body);
+    if (!news) {
         res.send('Incorrect data', 400);
         return;
     }
-    dataBase.getUserByTokenAsync(token)
-        .then((user) => {
-            let news = req.body;
+
+    dataBase.getUserIdByTokenAsync(token)
+        .then((tokenEntity) => {
+            let date = Date.now();
+            if (!tokenEntity || new Date(tokenEntity.expiryDate) > date)
+                return Promise.reject('Unauthorized');
+            console.log(tokenEntity.userId);
+            return dataBase.getUserByQueryAsync({_id: tokenEntity.userId});
+        }).then((user) => {
+            if(!user)
+                return Promise.reject('User not found');
+            console.log(user._id);
             news.publicationDate = new Date();
             news.author = user;
-            return dataBase.insertNewsAsync(news)
-        }, () => res.send('Unauthorized ',401))
-        .then(() => res.send('Success'))
-        .catch(() => res.send('News not added', 400))
+            return dataBase.insertNewsAsync(news);
+        }).then(() => res.send('Success')
+    ).catch((error) => {
+        let err = new Error(error);
+        err.status = error == 'Unauthorized' ? 401 : 500;
+        next(err);
+    });
 });
+
 router.post('/:id/modify', function(req, res, next) {
-    let token = checkToken(req.header('Authorization'));
+    const token = validationService.checkTokeninHeader(req.header('Authorization'));
     if(!token){
         res.send('Unauthorized ',401);
         return;
     }
-    let id = req.params.id;
-    if (!isValidNews(req.body) && !id) {
+    var newsId = req.params.id;
+    const news = validationService.createNews(req.body);
+    if (!news) {
         res.send('Incorrect data', 400);
         return;
     }
-    dataBase.getUserByTokenAsync(token)
-        .then((user) => {
-            let news = req.body;
-            if(news.author._id != user._id)
-                return Promise.resolve('Access is denied');
+    dataBase.generateObjectIdAsync(newsId)
+        .then((objectId) => {
+            newsId = objectId;
+            return dataBase.getUserIdByTokenAsync(token)
+        }).then((tokenEntity) => {
+            if(!tokenEntity)
+                return Promise.reject('Unauthorized');
+            return dataBase.getNewsByQueryAsync({
+                _id: newsId,
+                'author._id': tokenEntity.userId
+            })
+        }).then(() => {
             news.modifiedDate = new Date();
-            news.author = user;
-            return dataBase.modifyNewsAsync(news)
-        }, () => res.send('Unauthorized ',401))
-        .then(() => res.send('Success'))
-        .catch((err) => res.send(err, 400));
+            return dataBase.modifyNewsAsync(newsId, news);
+        }).then(() => res.send('Success'))
+        .catch((error) => {
+            let err = new Error(error);
+            err.status = 500;
+            if (err == 'Unauthorized')
+            if (err == 'News not found')
+                err.status = 404;
+            next(err);
+    });
 });
-function checkToken(strToken) {
-    if(!strToken)
-        return false;
-    let token = strToken.split(' ')[1];
-    if(!token)
-        return false;
-    return token;
-}
-function isValidNews(news) {
-    return !!news && news.title && news.titleContent && news.content && news.tag;
-}
 
 module.exports = router;

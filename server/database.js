@@ -13,35 +13,16 @@ class DataBase {
             module.exports = db;
             this.usersCollection = db.collection('Users');
             this.newsCollection = db.collection('News');
+            this.tokensCollection = db.collection('Tokens');
         });
-    }
-
-    logInAsync(user) {
-        return this.usersCollection.findOne(user)
-            .then((user) => {
-                if (!user)
-                    return Promise.reject("The user name and password don't match");
-                return user;
-            })
     }
 
     checkInAsync(user) {
-        var self = this;
-        return self.usersCollection.findOne(user)
-            .then((data) => {
-            if (data)
-                return Promise.reject('This login is already registered');
-            return;
-        }).then(() => {
-            return self.generateTokenAsync();
-        }).then((token) => {
-            user.token = token;
-            return self.usersCollection.insertOne(user);
-        }).then((data) => {
-            if (data.insertedCount != 1)
-                Promise.reject('Error');
-            return (data.ops[0]);
-        });
+        return this.usersCollection.insertOne(user);
+    }
+
+    getUserByQueryAsync(query){
+        return this.usersCollection.findOne(query, {name: 1})
     }
 
     getNewsByRangeAsync(from, to) {
@@ -50,11 +31,8 @@ class DataBase {
         return this.newsCollection.find().skip(skip).limit(count).toArray();
     }
 
-    getNewsByIdAsync(id) {
-        //TODO check other options
-        if (!ObjectID.isValid(id))
-            return Promise.reject('Bad id');
-        return this.newsCollection.findOne({_id: new ObjectID(id)})
+    getNewsByQueryAsync(query) {
+        return this.newsCollection.findOne(query)
             .then((news) => {
                 if (!news)
                     return Promise.reject('News not found');
@@ -71,14 +49,8 @@ class DataBase {
             })
     }
 
-    modifyNewsAsync(news) {
-        let id = news._id;
-        delete news._id;
-        delete news.publicationDate;
-        if(!ObjectID.isValid(id))
-            return Promise.reject('Bad id');
-        //TODO using ObkectID
-        return this.newsCollection.findAndModify({_id: new ObjectID(id)}, [], {$set: news})
+    modifyNewsAsync(id ,news) {
+        return this.newsCollection.findAndModify({_id: id}, [], {$set: news})
             .then((data) => {
                 if (!data.lastErrorObject.updatedExisting)
                     return Promise.reject('News not found');
@@ -86,13 +58,16 @@ class DataBase {
             })
     }
 
-    getUserByTokenAsync(token) {
-        return this.usersCollection.findOne({token: token}, {name: 1})
-            .then((user)=> {
-                if(!user)
-                    return Promise.reject('User not found');
-                return user;
-            })
+    generateObjectIdAsync(str) {
+        return new Promise((resolve, reject) => {
+            if (!ObjectID.isValid(str))
+                return reject('Bad string');
+            resolve(new ObjectID(str));
+        })
+    }
+
+    getUserIdByTokenAsync(token){
+        return this.tokensCollection.findOne({token: token})
     }
 
     generateTokenAsync() {
@@ -104,7 +79,16 @@ class DataBase {
             })
         })
     }
-}
 
+    insertTokenAsync(userId, token) {
+        let expiryDate = new Date();
+        expiryDate = new Date(expiryDate.getDate + 10);
+        return this.tokensCollection.insertOne({
+            userId: userId,
+            token: token,
+            expiryDate: expiryDate
+        })
+    }
+}
 
 module.exports = new DataBase();
