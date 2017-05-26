@@ -25,10 +25,15 @@ class DataBase {
         return this.usersCollection.findOne(query, {name: 1})
     }
 
-    getNewsByRangeAsync(from, to) {
-        let count = to - from + 1;
-        let skip = from == 0 ? 0 : --from;
-        return this.newsCollection.find().skip(skip).limit(count).toArray();
+    getNewsByRangeAsync(count, lastId) {
+        return new Promise((resolve, reject) => {
+            let searchObj = lastId ? {'_id': {'$lt': lastId }} : {};
+            this.newsCollection.find(searchObj).sort({'_id': -1}).limit(count).toArray((err , arr) => {
+                if(err)
+                    reject(err);
+                resolve(arr);
+            });
+        });
     }
 
     getNewsByQueryAsync(query) {

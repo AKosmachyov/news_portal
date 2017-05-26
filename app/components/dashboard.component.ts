@@ -26,7 +26,7 @@ import { NewsService } from '../services/news-service';
                 </div>
                 <h3 class="form-group">Загружать новости по:</h3>
                 <div class="form-group">
-                    <select class="form-control" (change)="onChange($event.target.value)">
+                    <select class="form-control" (change)="onChangeSelectEl($event.target.value)">
                         <option>3</option>
                         <option>4</option>
                         <option selected="selected">5</option>
@@ -52,12 +52,12 @@ import { NewsService } from '../services/news-service';
 })
 export class DashboardComponent implements OnInit {
     news: News[] = [];
-    from: number = 0;
     isDownload: boolean = false;
     needMore: boolean = false;
     isEndData: boolean = false;
 
-    downloadNextTime: number = 5;
+    downloadCount: number = 5;
+    lastId: string;
     authorSearch: string;
     dateSearch: string;
     constructor( private newsService : NewsService ) { };
@@ -69,16 +69,23 @@ export class DashboardComponent implements OnInit {
         this.next();
     }
     next(): void {
-        this.isDownload = true;
-        this.newsService.getNewsRange(this.from, this.from - 1 + +this.downloadNextTime).then((arr) => {
-            if(arr.length == 0) {
-                this.isEndData = true;
-                this.isDownload = false;
-                return;
+        const _self = this;
+        _self.isDownload = true;
+        let obj = {
+            count: _self.downloadCount,
+            id: _self.lastId
+        };
+
+        _self.newsService.getNewsRange(obj).then((arr) => {
+            if (arr.length < _self.downloadCount) {
+                _self.isEndData = true;
+                _self.isDownload = false;
             }
-            this.news = this.news.concat(arr);
-            this.from += +this.downloadNextTime;
-            this.isDownload = false;
+            if(arr.length == 0 )
+                return;
+            _self.lastId = arr[arr.length-1]._id;
+            _self.news = this.news.concat(arr);
+            _self.isDownload = false;
         });
     }
     @HostListener('click', ['$event.target'])
@@ -100,7 +107,7 @@ export class DashboardComponent implements OnInit {
     clearSearch () {
         this.authorSearch = this.dateSearch = null;
     }
-    onChange( value ) {
-        this.downloadNextTime = value;
+    onChangeSelectEl( value ) {
+        this.downloadCount = value;
     }
 }

@@ -29,10 +29,10 @@ import { NewsService } from '../services/news-service';
             
             <button class="btn btn-info" (click)="submit()" [disabled]="!userForm.valid">{{buttonText}}</button>
          </form>
-         <form *ngIf="displayError">
+         <div *ngIf="displayError">
                 <h1 class="err-block">{{errorStr}}</h1>
                 <button class="btn btn-info center-block" [routerLink]="['/dashboard']">Возвращаемся</button>
-         </form>     
+         </div>     
     `,
     styles: [`
         div {
@@ -71,6 +71,7 @@ import { NewsService } from '../services/news-service';
         .err-block {
             color: #5bc0de;
             text-align: center;
+            margin-bottom: 20px;
         }
         .err-block + button {
                 width: 40%;
@@ -120,7 +121,7 @@ export class EditorNewsComponent {
             return;
         let func = this.isChange ? this.update : this.add;
         func = func.bind(this);
-        func().catch(this.handleError);
+        func().catch(this.handleError.bind(this));
     }
 
     isValidFields() {

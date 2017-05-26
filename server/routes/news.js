@@ -4,18 +4,29 @@ const dataBase = require('../database');
 const validationService = require('../validationService');
 
 router.get('/', function(req, res) {
-    let from = parseInt(req.query.from, 10);
-    let to = parseInt(req.query.to, 10);
-    if(isNaN(from) || isNaN(to) || from >= to || from < 0 || to < 0) {
+    const count = parseInt(req.query.count, 10);
+    let lastId = req.query.id;
+    if(isNaN(count) && count < 1 && count > 50) {
         res.send('Incorrect range', 400);
         return;
     }
-    dataBase.getNewsByRangeAsync(from, to).then((data)=>{
-        res.json(data);
-    }).catch((err)=>{
-        res.send('Error');
-    });
-
+    //TODO Think about other options
+    if (lastId) {
+        dataBase.generateObjectIdAsync(lastId)
+            .then((id) => {
+                return dataBase.getNewsByRangeAsync(count, id)
+            }).then((arr) =>{
+                return res.json(arr);})
+            .catch((err) => {
+                    res.send('Bad id', 400);
+            });
+    } else {
+        dataBase.getNewsByRangeAsync(count)
+            .then((arr) => res.json(arr))
+            .catch((err) => {
+                res.send('Error', 500);
+        });
+    }
 });
 
 router.get('/:id', function(req, res) {
@@ -50,12 +61,10 @@ router.post('/insert', function(req, res, next) {
             let date = Date.now();
             if (!tokenEntity || new Date(tokenEntity.expiryDate) > date)
                 return Promise.reject('Unauthorized');
-            console.log(tokenEntity.userId);
             return dataBase.getUserByQueryAsync({_id: tokenEntity.userId});
         }).then((user) => {
             if(!user)
                 return Promise.reject('User not found');
-            console.log(user._id);
             news.publicationDate = new Date();
             news.author = user;
             return dataBase.insertNewsAsync(news);

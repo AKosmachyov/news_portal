@@ -14,8 +14,11 @@ export class NewsService {
         private authService: AuthService
     ) { }
 
-    getNewsRange(from: number, to: number): Promise<News[]> {
-        return this.http.get(`api/news?from=${from}&to=${to}`, {headers: this.authService.getAuthorizationHeader()})
+    getNewsRange(obj): Promise<News[]> {
+        let url = 'api/news?count=' + obj.count;
+        if(obj.id)
+            url += "&id=" + obj.id;
+        return this.http.get(url, {headers: this.authService.getAuthorizationHeader()})
             .toPromise()
             .then(response => response.json() as News[])
             .catch(this.handleError);
