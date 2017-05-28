@@ -11,7 +11,7 @@ import { News } from '../models/news';
 @Component({
     selector: 'news',
     template: `
-        <div *ngIf="!!news">
+        <div class="news-container" *ngIf="!!news">
             <span *ngIf="!news.modifiedDate">{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <span *ngIf="!!news.modifiedDate">
                 <i class="glyphicon glyphicon-refresh"></i>{{news.modifiedDate | date:"dd.MM.yy"}}
@@ -23,8 +23,11 @@ import { News } from '../models/news';
             <h1 class="title">
                 {{news.title}}
             </h1>
+            <div>
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
                 <i class="glyphicon glyphicon-user"></i><span>{{news.author.name}}</span>
+            </div>
+                <img src ="https://images3.alphacoders.com/823/82317.jpg"/>
             <div>
                 <p class="content" [innerHTML]="news.content"></p>
             </div>
@@ -33,7 +36,6 @@ import { News } from '../models/news';
                 <h1 class="err-block">{{errorStr}}</h1>
                 <button class="btn btn-info center-block" [routerLink]="['/dashboard']">Возвращаемся</button>
          </div>      
-         <div>
          <img id="spinner" src="app/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
     `,
     styles: [`
@@ -64,6 +66,16 @@ import { News } from '../models/news';
         }
         h1 {
             word-wrap: break-word;
+        }
+        img {
+            max-width: 80%;
+        }
+        .news-container {
+            text-align: center;
+        }
+        p {
+            margin: 25px 15% 25px;
+            text-indent: 1.5em
         }
     `]
 })

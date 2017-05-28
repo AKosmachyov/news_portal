@@ -9,7 +9,7 @@ import { News } from '../models/news';
                     <span aria-hidden="true">&times;</span>
                 </button>
             <div class="well" *ngIf="!!news">
-                <img src ="https://images3.alphacoders.com/823/82317.jpg"/>
+                <img src ="https://www.w3schools.com/css/img_mountains.jpg"/>
                 <h1 class="title">
                     <a [routerLink]="['/news', news._id]">{{news.title}}</a>
                     <span>
@@ -86,6 +86,7 @@ import { News } from '../models/news';
         h1 > span {
             font-size: 14px;
             word-wrap: break-word;
+            white-space: nowrap;
         }
     `]
 })
