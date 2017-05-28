@@ -26,7 +26,7 @@ import { News } from '../models/news';
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
                 <i class="glyphicon glyphicon-user"></i><span>{{news.author.name}}</span>
             <div>
-                <span class="content" [innerHTML]="news.content"></span>
+                <p class="content" [innerHTML]="news.content"></p>
             </div>
         </div>
          <div *ngIf="displayError">
@@ -46,7 +46,9 @@ import { News } from '../models/news';
         }
         .content {
             font-size: 16px;
-            line-height: 160%;    
+            line-height: 160%;
+            word-wrap: break-word;
+            text-align: justify;
         }
         a {
             text-decoration: none;
@@ -59,6 +61,9 @@ import { News } from '../models/news';
             height: 62px;
             margin-top: 10px;
             margin-bottom: 10px;
+        }
+        h1 {
+            word-wrap: break-word;
         }
     `]
 })

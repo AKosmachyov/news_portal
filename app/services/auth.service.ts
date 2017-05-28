@@ -56,11 +56,13 @@ export class AuthService {
     restoreCredentialFromLS(): User {
         let user: User = new User();
         let ls = window.localStorage;
+
         user.token = ls.getItem("token");
-        if(!user.token)
-            return null;
         user._id = ls.getItem("_id");
         user.name = ls.getItem("name");
+
+        if(!user.token || !user._id || !user.name)
+            return null;
         return user;
     }
 }
