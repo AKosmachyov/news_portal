@@ -69,6 +69,7 @@ router.post('/:id/modify', function(req, res, next) {
         return next(new HttpError(401));
 
     var newsId = req.params.id;
+    var userId;
     const news = validationService.createNews(req.body);
     if (!news)
         return next(new HttpError(400, 'Incorrect data'));
@@ -80,11 +81,18 @@ router.post('/:id/modify', function(req, res, next) {
         }).then((tokenEntity) => {
             if(!tokenEntity)
                 return Promise.reject(new HttpError(401));
-            return dataBase.getNewsByQueryAsync({
-                _id: newsId,
-                'author._id': tokenEntity.userId
-            })
-        }).then(() => {
+            userId = tokenEntity.userId;
+            return dataBase.checkPermissionAsync(newsId, tokenEntity.userId);
+        }).then((flag) => {
+            if(!flag)
+                return Promise.reject(new HttpError(400, 'Permission denied'));
+            return dataBase.getUserByQueryAsync({_id: userId});
+        }).then((user) => {
+            //TODO Here the owner of the news is changing
+            news.author = {
+                _id: user._id,
+                name: user.name
+            };
             news.modifiedDate = new Date();
             return dataBase.modifyNewsAsync(newsId, news);
         }).then(() => res.send('Success'))
