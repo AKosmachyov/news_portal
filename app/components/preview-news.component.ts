@@ -23,9 +23,15 @@ import { News } from '../models/news';
                 </div>
                 <div class="news-bottom">
                      <span *ngIf="!news.modifiedDate">{{news.publicationDate | date:"dd.MM.yy"}}</span>
-                     <span *ngIf="!!news.modifiedDate"><i class="glyphicon glyphicon-refresh"></i>{{news.modifiedDate | date:"dd.MM.yy"}}</span>
-                     <div class="author"><i class="glyphicon glyphicon-user"></i><span>{{news.author.name}}</span></div>
-                </div>            
+                     <span *ngIf="!!news.modifiedDate">
+                        <i class="glyphicon glyphicon-refresh"></i>{{news.modifiedDate | date:"dd.MM.yy"}}
+                    </span>
+                    <i *ngIf="news.archived" class="glyphicon glyphicon-piggy-bank"></i>
+                    <div class="author">
+                        <i class="glyphicon glyphicon-user"></i>
+                        <span>{{news.author.name}}</span>
+                    </div>
+                </div>      
             </div>
         </div>
     `,

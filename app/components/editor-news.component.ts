@@ -44,7 +44,7 @@ import { NewsService } from '../services/news-service';
             padding: 15px 15px 0;
         }
         input {
-            padding: 0 8px;
+            padding: 0 15px;
         }
         label {
             margin: 11px 0;
@@ -99,6 +99,8 @@ export class EditorNewsComponent {
             _self.newsService.getNews(id).then((news) => {
                 if(news.author._id != _self.authService.currentUser._id)
                     return Promise.reject({text: 'Different id', status: 403});
+                if(news.archived)
+                    return Promise.reject({text: 'News was archived', status: 403});
                 _self.news = news;
             }).catch(this.handleError.bind(_self));
         } else {
@@ -138,7 +140,7 @@ export class EditorNewsComponent {
         if(err.status == "404")
             this.errorStr = 'Запрашиваемая статья отсутствует';
         if(err.status == "403")
-                this.errorStr = 'Данная статья принадлежит другому пользователю';
+            this.errorStr = 'Данная статья недоступна для редактирования';
         this.displayError = true;
     }
 }

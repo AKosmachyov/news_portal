@@ -15,6 +15,7 @@ import { News } from '../models/news';
             <span *ngIf="!news.modifiedDate">{{news.publicationDate | date:"dd.MM.yy"}}</span>
             <span *ngIf="!!news.modifiedDate">
                 <i class="glyphicon glyphicon-refresh"></i>{{news.modifiedDate | date:"dd.MM.yy"}}
+                <i *ngIf="news.archived" class="glyphicon glyphicon-piggy-bank"></i>
             </span>
             <a *ngIf="displayEditButton" [routerLink]="['/editor', news._id]">
                 Изменить
@@ -99,7 +100,7 @@ export class NewsComponent implements OnInit {
             .subscribe(news => {
                 this.isDownload = false;
                 this.news = news;
-                if(this.authService.currentUser && news.author._id == this.authService.currentUser._id)
+                if(this.authService.currentUser && news.author._id == this.authService.currentUser._id && !news.archived)
                     this.displayEditButton = true;
             }, (err) => {
                 this.isDownload = false;

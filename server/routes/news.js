@@ -84,8 +84,12 @@ router.post('/:id/modify', function(req, res, next) {
             userId = tokenEntity.userId;
             return dataBase.checkPermissionAsync(newsId, tokenEntity.userId);
         }).then((flag) => {
-            if(!flag)
+            if (!flag)
                 return Promise.reject(new HttpError(400, 'Permission denied'));
+            return dataBase.getNewsByQueryAsync({_id: newsId, archived: true});
+        }).then((newsDB) => {
+            if(newsDB)
+                return Promise.reject(new HttpError(400, 'News was archived'));
             return dataBase.getUserByQueryAsync({_id: userId});
         }).then((user) => {
             //TODO Here the owner of the news is changing
@@ -99,7 +103,7 @@ router.post('/:id/modify', function(req, res, next) {
         .catch(next);
 });
 
-router.get('/:id/delete', function(req, res, next) {
+router.get('/:id/archive', function(req, res, next) {
     const token = validationService.checkTokeninHeader(req.header('Authorization'));
     if(!token)
         return next(new HttpError(401));
@@ -117,8 +121,10 @@ router.get('/:id/delete', function(req, res, next) {
         }).then((flag) => {
             if(!flag)
                 return Promise.reject(new HttpError(400, 'Permission denied'));
-            if(flag)
-                return dataBase.deleteNewsAsync(newsId);
+            return dataBase.getNewsByQueryAsync({_id: newsId});
+        }).then((news) => {
+            news.archived = true;
+            return dataBase.modifyNewsAsync(newsId, news);
         }).then(() => res.send('Success'))
         .catch(next);
 });

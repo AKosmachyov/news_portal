@@ -9,4 +9,5 @@ export class News {
     publicationDate: Date;
     modifiedDate: Date;
     _id: string;
+    archived: boolean;
 }
