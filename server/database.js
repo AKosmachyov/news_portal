@@ -4,15 +4,10 @@ const crypto = require('crypto');
 const HttpError = require('./error/HttpError');
 
 const url = 'mongodb://localhost:27017/news-portal';
-const options = {
-    server : {
-        reconnectTries: 5
-    }
-};
 
 class DataBase {
     constructor() {
-        MongoClient.connect(url, options, (err, db) => {
+        MongoClient.connect(url, {reconnectTries: 5}, (err, db) => {
             if(err)
                 throw new Error("Can't connect to the database");
             console.log("Connected successfully to db");
@@ -28,7 +23,7 @@ class DataBase {
     }
 
     getUserByQueryAsync(query){
-        return this.usersCollection.findOne(query, {name: 1})
+        return this.usersCollection.findOne(query, {name: 1, userType: 1});
     }
 
     getNewsByRangeAsync(count, lastId) {
@@ -98,6 +93,34 @@ class DataBase {
             userId: userId,
             token: token,
             expiryDate: expiryDate
+        })
+    }
+
+    checkPermissionAsync(newsId, userId) {
+        const _self = this;
+        var user;
+        return _self.getUserByQueryAsync({_id: userId})
+            .then((userBD) => {
+                if(!userBD)
+                    return Promise.reject(new HttpError(400,'Unknown user'));
+                user = userBD;
+                return user;
+            }).then(() => {
+                return _self.getNewsByQueryAsync({_id: newsId})
+            }).then((news) => {
+                return user.userType == "admin" || news.author._id.toString() == user._id.toString();
+        })
+    }
+
+    deleteNewsAsync(id) {
+        return new Promise((resolve, reject) => {
+            this.newsCollection.findOneAndDelete({_id: id}, (err, val) => {
+                if(err)
+                    return Promise.reject(err);
+                if(val.lastErrorObject.n != 1)
+                    return Promise.reject(new HttpError(500, 'Server error'));
+                resolve();
+            })
         })
     }
 }

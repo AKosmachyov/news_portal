@@ -91,4 +91,28 @@ router.post('/:id/modify', function(req, res, next) {
         .catch(next);
 });
 
+router.get('/:id/delete', function(req, res, next) {
+    const token = validationService.checkTokeninHeader(req.header('Authorization'));
+    if(!token)
+        return next(new HttpError(401));
+
+    var newsId = req.params.id;
+
+    dataBase.generateObjectIdAsync(newsId)
+        .then((objectId) => {
+            newsId = objectId;
+            return dataBase.getUserIdByTokenAsync(token)
+        }).then((tokenEntity) => {
+            if(!tokenEntity)
+                return Promise.reject(new HttpError(401));
+            return dataBase.checkPermissionAsync(newsId, tokenEntity.userId)
+        }).then((flag) => {
+            if(!flag)
+                return Promise.reject(new HttpError(400, 'Permission denied'));
+            if(flag)
+                return dataBase.deleteNewsAsync(newsId);
+        }).then(() => res.send('Success'))
+        .catch(next);
+});
+
 module.exports = router;
