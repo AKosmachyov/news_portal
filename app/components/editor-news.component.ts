@@ -133,7 +133,6 @@ export class EditorNewsComponent {
     }
 
     handleError(err) {
-        console.log(err);
         if(!err.status)
             this.errorStr = 'Отсутствует подключение к сети Интернет';
         if(err.status == "404")

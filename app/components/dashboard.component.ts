@@ -9,8 +9,12 @@ import { NewsService } from '../services/news-service';
         <div class="col-md-8 col-xs-8">
             <preview-news *ngFor="let item of news | newsFilter: authorSearch: dateSearch" [news]="item"></preview-news>
             <img id="spinner" src="app/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
-            <button class="btn btn-info col-xs-6 col-xs-offset-3 get-more-button" (click)="getMore()" *ngIf="!needMore && !isDownload">Загрузить ещё</button>
-            <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="isEndData">На этом новости закончились :(</h3>
+            <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="isEndData">
+                На этом новости закончились :(
+            </h3>
+            <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="displayError">{{errorStr}}(</h3>
+            <button class="btn btn-info col-xs-6 col-xs-offset-3 get-more-button" (click)="getMore()"
+                    *ngIf="!needMore && !isDownload">Загрузить ещё</button>
         </div>
         <div class="col-md-4 col-xs-4">
             <div class="form-horizontal">
@@ -60,6 +64,9 @@ export class DashboardComponent implements OnInit {
     lastId: string;
     authorSearch: string;
     dateSearch: string;
+
+    displayError: boolean = false;
+    errorStr: string;
     constructor( private newsService : NewsService ) { };
     ngOnInit(): void {
         this.next();
@@ -86,6 +93,15 @@ export class DashboardComponent implements OnInit {
             _self.lastId = arr[arr.length-1]._id;
             _self.news = this.news.concat(arr);
             _self.isDownload = false;
+        }, (err) => {
+            if(!err.status) {
+                this.errorStr = 'Отсутствует подключение к сети Интернет';
+            } else {
+                this.errorStr = 'На сервере произошел сбой';
+            }
+            _self.needMore = false;
+            _self.isDownload = false;
+            _self.displayError = true;
         });
     }
     @HostListener('click', ['$event.target'])

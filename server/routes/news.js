@@ -17,9 +17,7 @@ router.get('/', function(req, res, next) {
                 return dataBase.getNewsByRangeAsync(count, id)
             }).then((arr) =>{
                 return res.json(arr);})
-            .catch((err) => {
-                return next(new HttpError(400, 'Bad id'));
-            });
+            .catch(next);
     } else {
         dataBase.getNewsByRangeAsync(count)
             .then((arr) => res.json(arr))
