@@ -2,16 +2,15 @@ const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 
 const profile = require('./routes/profile');
 const news = require('./routes/news');
 
+const dataBase = require('./database');
+
 const app = express();
 
-// view engine setup
-app.set('view engine', 'ejs');
 app.use('/app', express.static(path.join(__dirname, '../app')));
 app.use('/node_modules', express.static(path.join(__dirname, '../node_modules')));
 
@@ -20,7 +19,6 @@ app.use('/node_modules', express.static(path.join(__dirname, '../node_modules'))
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 app.get('/', function(req, res) {
     res.sendFile('index.html', { root: './app' });
@@ -40,14 +38,12 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.send(err.message);
+app.use(function(err, req, res, next) {
+    if (err.name == "MongoError") {
+        err.message = "Problem with database";
+        err.status = 500;
+    }
+  res.send(err.message, err.status || 500);
 });
 
 module.exports = app;

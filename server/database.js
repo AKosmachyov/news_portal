@@ -1,12 +1,18 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const crypto = require('crypto');
+const HttpError = require('./error/HttpError');
 
 const url = 'mongodb://localhost:27017/news-portal';
+const options = {
+    server : {
+        reconnectTries: 5
+    }
+};
 
 class DataBase {
     constructor() {
-        MongoClient.connect(url, (err, db) => {
+        MongoClient.connect(url, options, (err, db) => {
             if(err)
                 throw new Error("Can't connect to the database");
             console.log("Connected successfully to db");
@@ -40,7 +46,7 @@ class DataBase {
         return this.newsCollection.findOne(query)
             .then((news) => {
                 if (!news)
-                    return Promise.reject('News not found');
+                    return Promise.reject(new HttpError(400, 'News not found'));
                 return news;
             })
     }
@@ -49,7 +55,7 @@ class DataBase {
         return this.newsCollection.insertOne(news)
             .then((data) => {
                 if (data.insertedCount != 1)
-                    return Promise.reject('News not added');
+                    return Promise.reject(new HttpError(500, 'News not added'));
                 return data;
             })
     }
@@ -58,7 +64,7 @@ class DataBase {
         return this.newsCollection.findAndModify({_id: id}, [], {$set: news})
             .then((data) => {
                 if (!data.lastErrorObject.updatedExisting)
-                    return Promise.reject('News not found');
+                    return Promise.reject(new HttpError(400, 'News not found'));
                 return;
             })
     }
@@ -66,7 +72,7 @@ class DataBase {
     generateObjectIdAsync(str) {
         return new Promise((resolve, reject) => {
             if (!ObjectID.isValid(str))
-                return reject('Bad string');
+                return reject(new HttpError(400,'Bad string'));
             resolve(new ObjectID(str));
         })
     }
