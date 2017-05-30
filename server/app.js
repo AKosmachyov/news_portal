@@ -42,8 +42,9 @@ app.use(function(err, req, res, next) {
     if (err.name == "MongoError") {
         err.message = "Problem with database";
         err.status = 500;
+        dataBase.reconnectToDB();
     }
-  res.send(err.message, err.status || 500);
+  res.status(err.status || 500).send(err.message);
 });
 
 module.exports = app;

@@ -5,13 +5,14 @@ const HttpError = require('./error/HttpError');
 
 const url = 'mongodb://localhost:27017/news-portal';
 
+var tempFlag = false;
+
 class DataBase {
     constructor() {
         MongoClient.connect(url, {reconnectTries: 5}, (err, db) => {
-            if(err)
-                throw new Error("Can't connect to the database");
-            console.log("Connected successfully to db");
-            module.exports = db;
+            if (err)
+                throw new Error('Can not connect to the database');
+            console.log('Connected successfully to db');
             this.usersCollection = db.collection('Users');
             this.newsCollection = db.collection('News');
             this.tokensCollection = db.collection('Tokens');
@@ -124,6 +125,38 @@ class DataBase {
                 resolve();
             })
         })
+    }
+
+    connectToDb(self) {
+        MongoClient.connect(url, {reconnectTries: 5}, (err, db) => {
+            if (err) {
+                console.log("Can not connect to the database");
+                tempFlag = false;
+                return self.reconnectToDB();
+            }
+            console.log("Connected successfully to db");
+            self.setCollectionToClass({
+                usersCollection: db.collection('Users'),
+                newsCollection: db.collection('News'),
+                tokensCollection: db.collection('Tokens')
+            });
+            tempFlag = false;
+        });
+
+    }
+
+    reconnectToDB() {
+        if(tempFlag)
+            return;
+        tempFlag = true;
+        const _self = this;
+        setTimeout(_self.connectToDb, 5000, _self);
+    }
+
+    setCollectionToClass(obj) {
+        this.usersCollection = obj.usersCollection;
+        this.newsCollection = obj.newsCollection;
+        this.tokensCollection = obj.tokensCollection;
     }
 }
 
