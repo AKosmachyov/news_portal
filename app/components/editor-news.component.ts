@@ -27,10 +27,9 @@ import { NewsService } from '../services/news-service';
                       required minlength="1" maxlength="200" autocomplete="off"></textarea>
                       
             <label for="content">Текст</label>
-            <textarea name="content" cols="30" rows="15" class="form-control" [(ngModel)]="news.content"
-                      required minlength="1" autocomplete="off"></textarea>
+            <content-editor name="content"></content-editor>
             
-            <button class="btn btn-info" (click)="submit()" [disabled]="!userForm.valid">{{buttonText}}</button>
+            <button class="btn btn-info center-block" (click)="submit()" [disabled]="!userForm.valid">{{buttonText}}</button>
          </form>
          <div *ngIf="displayError">
                 <h1 class="err-block">{{errorStr}}</h1>
@@ -52,15 +51,10 @@ import { NewsService } from '../services/news-service';
         label {
             margin: 11px 0;
         }
-        textarea[name="content"] {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        textarea + button {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            width: 100%;
-            margin-bottom: 30px;
+        content-editor + button {
+            width: 70%;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         .ng-touched.ng-invalid {
            border-color: #a94442;
