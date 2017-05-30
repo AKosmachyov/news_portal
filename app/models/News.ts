@@ -10,4 +10,5 @@ export class News {
     modifiedDate: Date;
     _id: string;
     archived: boolean;
+    titleImg: string;
 }

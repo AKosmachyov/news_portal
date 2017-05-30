@@ -15,6 +15,9 @@ import { NewsService } from '../services/news-service';
             <input name="title" class="form-control" [(ngModel)]="news.title" required
                    minlength="1" maxlength="100" autocomplete="off"/>
                    
+            <label for="titleImg">Ссылка на титульное изображение</label>
+            <input name="titleImg" class="form-control" [(ngModel)]="news.titleImg"/>
+                   
             <label for="tag">Тэг</label>
             <input name="tag" class="form-control" [(ngModel)]="news.tag" required
                    minlength="1" maxlength="100" autocomplete="off"/>
@@ -127,6 +130,7 @@ export class EditorNewsComponent {
     }
 
     isValidFields() {
+        this.news.titleImg = this.news.titleImg ? this.news.titleImg.trim(): '';
         this.news.title = this.news.title ? this.news.title.trim() : '';
         this.news.titleContent = this.news.titleContent ? this.news.titleContent.trim() : '';
         this.news.content = this.news.content ? this.news.content.trim() : '';

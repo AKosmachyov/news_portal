@@ -31,7 +31,7 @@ import { News } from '../models/news';
                 <i class="glyphicon glyphicon-tags"></i><span>{{news.tag}}</span>
                 <i class="glyphicon glyphicon-user"></i><span>{{news.author.name}}</span>
             </div>
-                <img src ="https://images3.alphacoders.com/823/82317.jpg"/>
+            <img *ngIf="!!news.titleImg" [src]="news.titleImg"/>
             <div>
                 <p class="content" [innerHTML]="news.content"></p>
             </div>
@@ -74,6 +74,7 @@ import { News } from '../models/news';
         }
         img {
             max-width: 80%;
+            width: 100%;
         }
         .news-container {
             text-align: center;

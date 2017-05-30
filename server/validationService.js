@@ -42,12 +42,15 @@ class ValidationService {
         if (!(body && this.isValidStringForNews(body.title, 100) && this.isValidStringForNews(body.titleContent, 200) &&
             this.isValidStringForNews(body.content, Infinity) && this.isValidStringForNews(body.tag, 100)))
             return null;
-        return {
+        let news ={
             title: body.title,
             titleContent: body.titleContent,
             content: body.content,
             tag: body.tag
-        }
+        };
+        if(body.titleImg && typeof(body.titleImg) == "string" && body.titleImg.length > 0)
+            news.titleImg = body.titleImg;
+        return news;
     }
 
     isValidStringForNews(str, maxlength) {

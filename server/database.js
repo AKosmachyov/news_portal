@@ -22,8 +22,10 @@ class DataBase {
         return this.usersCollection.insertOne(user);
     }
 
-    getUserByQueryAsync(query){
-        return this.usersCollection.findOne(query, {name: 1, userType: 1});
+    getUserByQueryAsync(query, options){
+        if(!options)
+            options = {name: 1};
+        return this.usersCollection.findOne(query, options);
     }
 
     getNewsByRangeAsync(count, lastId) {
@@ -99,12 +101,12 @@ class DataBase {
     checkPermissionAsync(newsId, userId) {
         const _self = this;
         var user;
-        return _self.getUserByQueryAsync({_id: userId})
+        return _self.getUserByQueryAsync({_id: userId}, {userType: 1})
             .then((userBD) => {
                 if(!userBD)
                     return Promise.reject(new HttpError(400,'Unknown user'));
                 user = userBD;
-                return user;
+                return;
             }).then(() => {
                 return _self.getNewsByQueryAsync({_id: newsId})
             }).then((news) => {

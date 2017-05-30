@@ -93,10 +93,7 @@ router.post('/:id/modify', function(req, res, next) {
             return dataBase.getUserByQueryAsync({_id: userId});
         }).then((user) => {
             //TODO Here the owner of the news is changing
-            news.author = {
-                _id: user._id,
-                name: user.name
-            };
+            news.author = user;
             news.modifiedDate = new Date();
             return dataBase.modifyNewsAsync(newsId, news);
         }).then(() => res.send('Success'))

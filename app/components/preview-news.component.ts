@@ -9,7 +9,7 @@ import { News } from '../models/news';
                     <span aria-hidden="true">&times;</span>
                 </button>
             <div class="well" *ngIf="!!news">
-                <img src ="https://www.w3schools.com/css/img_mountains.jpg"/>
+                <img *ngIf="!!news.titleImg" [src]="news.titleImg"/>
                 <h1 class="title">
                     <a [routerLink]="['/news', news._id]">{{news.title}}</a>
                     <span>
