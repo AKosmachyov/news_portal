@@ -44,6 +44,12 @@ export class NewsService {
             .then((val) => val.text())
             .catch(this.handleError)
     }
+    archiveNews(id: string): Promise<string> {
+        return this.http.get(`api/news/${id}/archive`, {headers: this.authService.getAuthorizationHeader()})
+            .toPromise()
+            .then((val) => val.text())
+            .catch(this.handleError)
+    }
 
     private handleError(error: any): Promise<any> {
         return Promise.reject(error.message || error);

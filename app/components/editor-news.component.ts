@@ -74,8 +74,7 @@ import { NewsService } from '../services/news-service';
             margin-bottom: 20px;
         }
         .err-block + button {
-                width: 40%;
-                font-size: 16px;
+            font-size: 16px;
         }
     `]
 })
@@ -97,7 +96,8 @@ export class EditorNewsComponent {
             const _self = this;
             _self.isChange = true;
             _self.newsService.getNews(id).then((news) => {
-                if(news.author._id != _self.authService.currentUser._id)
+                if(news.author._id != _self.authService.currentUser._id &&
+                   _self.authService.currentUser.userType != "admin")
                     return Promise.reject({text: 'Different id', status: 403});
                 if(news.archived)
                     return Promise.reject({text: 'News was archived', status: 403});
@@ -141,6 +141,8 @@ export class EditorNewsComponent {
             this.errorStr = 'Запрашиваемая статья отсутствует';
         if(err.status == "403")
             this.errorStr = 'Данная статья недоступна для редактирования';
+        if(err.status == "500")
+            this.errorStr = 'На сервере возникли проблемы';
         this.displayError = true;
     }
 }

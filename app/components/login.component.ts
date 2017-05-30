@@ -56,18 +56,20 @@ export class LoginComponent {
         private router: Router
     ) {};
     onSubmit(): void {
-        this.authService.login(this.user.login, this.user.password).then(() => {
-            if (this.authService.currentUser) {
-                let redirect = this.authService.redirectUrl;
-                this.router.navigate([redirect]);
+        const _self = this;
+        _self.authService.login(_self.user.login, _self.user.password).then(() => {
+            if (_self.authService.currentUser) {
+                let redirect = _self.authService.redirectUrl;
+                _self.router.navigate([redirect]);
             }
         }).catch((err)=> {
-            if(!err.status) {
-                this.errorStr = 'Отсутствует подключение к сети Интернет';
-            } else {
-                this.errorStr = 'Неверный логин или пароль';
-            }
-            this.isError = true;
+            if(!err.status)
+                _self.errorStr = 'Отсутствует подключение к сети Интернет';
+            if(err.status == 400)
+                _self.errorStr = 'Неверный логин или пароль';
+            if(!this.errorStr)
+                _self.errorStr = "На сервере произошел сбой";
+            _self.isError = true;
         })
     }
     showPassword(flag: boolean){

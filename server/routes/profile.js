@@ -15,17 +15,22 @@ router.post('/login', function(req, res, next) {
                 return Promise.reject(new HttpError(400, "The user name and password don't match"));
             user._id = data._id;
             user.name = data.name;
+            if (data.userType)
+                user.userType = data.userType;
             return dataBase.generateTokenAsync();
         }).then((token) => {
             return dataBase.insertTokenAsync(user._id, token);
         }).then((status) => {
             if(status.insertedCount != 1)
                 return Promise.reject(new HttpError(500));
-            res.send({
+            let obj = {
                 _id: status.ops[0].userId,
                 token: status.ops[0].token,
                 name: user.name
-            })
+            };
+            if (user.userType)
+                obj.userType = user.userType;
+            res.json(obj);
         }).catch(next);
 });
 

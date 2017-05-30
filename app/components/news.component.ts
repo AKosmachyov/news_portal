@@ -21,6 +21,9 @@ import { News } from '../models/news';
                 Изменить
                 <i class="glyphicon glyphicon-pencil"></i>
             </a>
+            <a *ngIf="displayEditButton" (click)="toArchive()">
+                В архив
+            </a>
             <h1 class="title">
                 {{news.title}}
             </h1>
@@ -55,6 +58,7 @@ import { News } from '../models/news';
         }
         a {
             text-decoration: none;
+            cursor: pointer;
         }
         .err-block {
             color: #5bc0de;
@@ -94,22 +98,39 @@ export class NewsComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.isDownload = true;
-        this.route.params
-            .switchMap((params: Params) => this.newsService.getNews(params['id']))
+        let _self = this;
+        _self.isDownload = true;
+        _self.route.params
+            .switchMap((params: Params) => _self.newsService.getNews(params['id']))
             .subscribe(news => {
-                this.isDownload = false;
-                this.news = news;
-                if(this.authService.currentUser && news.author._id == this.authService.currentUser._id && !news.archived)
-                    this.displayEditButton = true;
+                _self.isDownload = false;
+                _self.news = news;
+                if(_self.authService.currentUser && (news.author._id == _self.authService.currentUser._id ||
+                    _self.authService.currentUser.userType == "admin" )&& !news.archived)
+                    _self.displayEditButton = true;
             }, (err) => {
-                this.isDownload = false;
-                if(!err.status) {
-                    this.errorStr = 'Отсутствует подключение к сети Интернет';
-                } else {
-                    this.errorStr = '404 Данная страница не найдена';
-                }
-                this.displayError = true;
+                _self.isDownload = false;
+                _self.handleError.call(_self, err)
             });
+    }
+    toArchive() {
+        let _self = this;
+        _self.newsService.archiveNews(_self.news._id)
+            .then(()=> {
+                _self.news.archived = true;
+                _self.displayEditButton = false;
+            })
+            .catch((err) => _self.handleError.call(_self, err))
+    }
+    handleError(err) {
+        if(!err.status)
+            this.errorStr = 'Отсутствует подключение к сети Интернет';
+        if(err.status == "404")
+            this.errorStr = 'Запрашиваемая статья отсутствует';
+        if(err.status == "403")
+            this.errorStr = 'Данная статья недоступна для редактирования';
+        if(err.status == "500")
+            this.errorStr = 'На сервере возникли проблемы';
+        this.displayError = true;
     }
 }

@@ -52,6 +52,7 @@ export class AuthService {
         ls.setItem("token", user.token);
         ls.setItem("name", user.name);
         ls.setItem("_id", user._id);
+        ls.setItem("userType", user.userType)
     }
     restoreCredentialFromLS(): User {
         let user: User = new User();
@@ -60,6 +61,7 @@ export class AuthService {
         user.token = ls.getItem("token");
         user._id = ls.getItem("_id");
         user.name = ls.getItem("name");
+        user.userType = ls.getItem("userType");
 
         if(!user.token || !user._id || !user.name)
             return null;

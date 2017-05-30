@@ -62,18 +62,20 @@ export class CheckinComponent {
         private router: Router
     ) {};
     onSubmit(): void {
-        this.authService.checkin(this.user).then(() => {
-            if (this.authService.currentUser) {
-                let redirect = this.authService.redirectUrl;
-                this.router.navigate([redirect]);
+        const _self = this;
+        _self.authService.checkin(_self.user).then(() => {
+            if (_self.authService.currentUser) {
+                let redirect = _self.authService.redirectUrl;
+                _self.router.navigate([redirect]);
             }
         }).catch((err)=> {
-            if(!err.status) {
-                this.errorStr = 'Отсутствует подключение к сети Интернет';
-            } else {
-                this.errorStr = 'Данный логин уже зарегистрирован';
-            }
-            this.dislpayError = true;
+            if(!err.status)
+                _self.errorStr = 'Отсутствует подключение к сети Интернет';
+            if(err.status == 400)
+                _self.errorStr = 'Данный логин уже зарегистрирован';
+            if(!this.errorStr)
+                _self.errorStr = "На сервере произошел сбой";
+            _self.dislpayError = true;
         });
     }
     showPassword(flag: boolean){

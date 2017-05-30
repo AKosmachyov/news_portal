@@ -86,9 +86,9 @@ router.post('/:id/modify', function(req, res, next) {
         }).then((flag) => {
             if (!flag)
                 return Promise.reject(new HttpError(400, 'Permission denied'));
-            return dataBase.getNewsByQueryAsync({_id: newsId, archived: true});
+            return dataBase.getNewsByQueryAsync({_id: newsId});
         }).then((newsDB) => {
-            if(newsDB)
+            if(newsDB.archived)
                 return Promise.reject(new HttpError(400, 'News was archived'));
             return dataBase.getUserByQueryAsync({_id: userId});
         }).then((user) => {
