@@ -27,7 +27,8 @@ import { NewsService } from '../services/news-service';
                       required minlength="1" maxlength="200" autocomplete="off"></textarea>
                       
             <label for="content">Текст</label>
-            <content-editor name="content"></content-editor>
+            <content-editor name="content" (onEditorContentChange)="onContentChange($event)"
+                            [content]="news.content"></content-editor>
             
             <button class="btn btn-info center-block" (click)="submit()" [disabled]="!userForm.valid">{{buttonText}}</button>
          </form>
@@ -78,10 +79,13 @@ import { NewsService } from '../services/news-service';
 
 export class EditorNewsComponent {
     news: News;
+
     isChange: boolean = false;
     buttonText: string = 'Добавить';
+
     displayError: boolean = false;
     errorStr: string;
+
     constructor (
         private newsService : NewsService,
         private authService: AuthService,
@@ -92,12 +96,16 @@ export class EditorNewsComponent {
         if (id) {
             const _self = this;
             _self.isChange = true;
+            _self.buttonText = 'Редактировать';
             _self.newsService.getNews(id).then((news) => {
-                if(news.author._id != _self.authService.currentUser._id &&
-                   _self.authService.currentUser.userType != "admin")
+                const user = _self.authService.currentUser;
+
+                if(news.author._id != user._id && user.userType != "admin")
                     return Promise.reject({text: 'Different id', status: 403});
+
                 if(news.archived)
                     return Promise.reject({text: 'News was archived', status: 403});
+
                 _self.news = news;
             }).catch(this.handleError.bind(_self));
         } else {
@@ -130,6 +138,10 @@ export class EditorNewsComponent {
         this.news.content = this.news.content ? this.news.content.trim() : '';
         this.news.tag = this.news.tag ? this.news.tag.trim() : '';
         return this.news.title && this.news.titleContent && this.news.content && this.news.tag;
+    }
+
+    onContentChange(str) {
+        this.news.content = str;
     }
 
     handleError(err) {
