@@ -33,7 +33,7 @@ import { News } from '../models/news';
             </div>
             <img *ngIf="!!news.titleImg" [src]="news.titleImg"/>
             <div>
-                <p class="content" [innerHTML]="news.content"></p>
+                <div class="content" [innerHTML]="news.content"></div>
             </div>
         </div>
          <div *ngIf="displayError">
@@ -55,6 +55,8 @@ import { News } from '../models/news';
             line-height: 160%;
             word-wrap: break-word;
             text-align: justify;
+            margin: 25px 15% 25px;
+            text-indent: 1.5em
         }
         a {
             text-decoration: none;
@@ -72,16 +74,12 @@ import { News } from '../models/news';
         h1 {
             word-wrap: break-word;
         }
-        img {
+        .news-container img {
             max-width: 80%;
             width: 100%;
         }
         .news-container {
             text-align: center;
-        }
-        p {
-            margin: 25px 15% 25px;
-            text-indent: 1.5em
         }
     `]
 })

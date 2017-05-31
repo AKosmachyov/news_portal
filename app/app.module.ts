@@ -12,6 +12,7 @@ import { DashboardComponent } from './components/dashboard.component';
 import { EditorNewsComponent } from './components/editor-news.component';
 import { LoginComponent } from './components/login.component';
 import { CheckinComponent } from './components/checkin.component';
+import { ContentEditorComponent } from './components/content-editor.component';
 
 import { NewsService } from './services/news-service';
 import { AuthService } from './services/auth.service';
@@ -34,6 +35,7 @@ import { NewsFilterPipe } from './pipes/news-filter.pipe';
         EditorNewsComponent,
         LoginComponent,
         CheckinComponent,
+        ContentEditorComponent,
         NewsFilterPipe
     ],
     bootstrap: [ AppComponent ],

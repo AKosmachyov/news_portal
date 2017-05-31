@@ -1,0 +1,3 @@
+{
+  "MongoDbUrl": "mongodb://localhost:27017/news-portal"
+}

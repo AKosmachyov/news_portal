@@ -27,10 +27,11 @@ import { NewsService } from '../services/news-service';
                       required minlength="1" maxlength="200" autocomplete="off"></textarea>
                       
             <label for="content">Текст</label>
-            <textarea name="content" cols="30" rows="15" class="form-control" [(ngModel)]="news.content"
-                      required minlength="1" autocomplete="off"></textarea>
+            <content-editor name="content" (onEditorContentChange)="onContentChange($event)"
+                            [content]="news.content"></content-editor>
             
-            <button class="btn btn-info" (click)="submit()" [disabled]="!userForm.valid">{{buttonText}}</button>
+            <button class="btn btn-info center-block" (click)="submit()"
+                    [disabled]="!userForm.valid || !news.content">{{buttonText}}</button>
          </form>
          <div *ngIf="displayError">
                 <h1 class="err-block">{{errorStr}}</h1>
@@ -52,15 +53,10 @@ import { NewsService } from '../services/news-service';
         label {
             margin: 11px 0;
         }
-        textarea[name="content"] {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        textarea + button {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            width: 100%;
-            margin-bottom: 30px;
+        content-editor + button {
+            width: 70%;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         .ng-touched.ng-invalid {
            border-color: #a94442;
@@ -84,10 +80,13 @@ import { NewsService } from '../services/news-service';
 
 export class EditorNewsComponent {
     news: News;
+
     isChange: boolean = false;
     buttonText: string = 'Добавить';
+
     displayError: boolean = false;
     errorStr: string;
+
     constructor (
         private newsService : NewsService,
         private authService: AuthService,
@@ -98,12 +97,16 @@ export class EditorNewsComponent {
         if (id) {
             const _self = this;
             _self.isChange = true;
+            _self.buttonText = 'Редактировать';
             _self.newsService.getNews(id).then((news) => {
-                if(news.author._id != _self.authService.currentUser._id &&
-                   _self.authService.currentUser.userType != "admin")
+                const user = _self.authService.currentUser;
+
+                if(news.author._id != user._id && user.userType != "admin")
                     return Promise.reject({text: 'Different id', status: 403});
+
                 if(news.archived)
                     return Promise.reject({text: 'News was archived', status: 403});
+
                 _self.news = news;
             }).catch(this.handleError.bind(_self));
         } else {
@@ -136,6 +139,10 @@ export class EditorNewsComponent {
         this.news.content = this.news.content ? this.news.content.trim() : '';
         this.news.tag = this.news.tag ? this.news.tag.trim() : '';
         return this.news.title && this.news.titleContent && this.news.content && this.news.tag;
+    }
+
+    onContentChange(str) {
+        this.news.content = str;
     }
 
     handleError(err) {

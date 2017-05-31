@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const profile = require('./routes/profile');
 const news = require('./routes/news');
 
-const dataBase = require('./database');
+const dataBase = require('./module/database');
 
 const app = express();
 
