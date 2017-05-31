@@ -74,7 +74,7 @@ import { News } from '../models/news';
         h1 {
             word-wrap: break-word;
         }
-        img {
+        .news-container img {
             max-width: 80%;
             width: 100%;
         }
