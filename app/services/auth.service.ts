@@ -67,4 +67,9 @@ export class AuthService {
             return null;
         return user;
     }
+    deleteCredential(): void {
+        this.currentUser = null;
+        let ls = window.localStorage;
+        ls.clear();
+    }
 }

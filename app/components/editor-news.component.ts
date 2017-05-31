@@ -152,6 +152,10 @@ export class EditorNewsComponent {
             this.errorStr = 'Запрашиваемая статья отсутствует';
         if(err.status == "403")
             this.errorStr = 'Данная статья недоступна для редактирования';
+        if(err.status == "401") {
+            this.errorStr = 'Авторизуйтесь пожалуйста заново';
+            this.authService.deleteCredential();
+        }
         if(err.status == "500")
             this.errorStr = 'На сервере возникли проблемы';
         this.displayError = true;

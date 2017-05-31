@@ -104,8 +104,8 @@ export class NewsComponent implements OnInit {
             .subscribe(news => {
                 _self.isDownload = false;
                 _self.news = news;
-                if(_self.authService.currentUser && (news.author._id == _self.authService.currentUser._id ||
-                    _self.authService.currentUser.userType == "admin" )&& !news.archived)
+                const user = _self.authService.currentUser;
+                if(user && (news.author._id == user._id || user.userType == "admin" )&& !news.archived)
                     _self.displayEditButton = true;
             }, (err) => {
                 _self.isDownload = false;
@@ -128,6 +128,10 @@ export class NewsComponent implements OnInit {
             this.errorStr = 'Запрашиваемая статья отсутствует';
         if(err.status == "403")
             this.errorStr = 'Данная статья недоступна для редактирования';
+        if(err.status == "401") {
+            this.errorStr = 'Авторизуйтесь пожалуйста заново';
+            this.authService.deleteCredential();
+        }
         if(err.status == "500")
             this.errorStr = 'На сервере возникли проблемы';
         this.displayError = true;

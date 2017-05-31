@@ -32,7 +32,7 @@ class DataBase {
     getNewsByRangeAsync(count, lastId) {
         return new Promise((resolve, reject) => {
             let searchObj = lastId ? {'_id': {'$lt': lastId }} : {};
-            this.newsCollection.find(searchObj).sort({'_id': -1}).limit(count).toArray((err , arr) => {
+            this.newsCollection.find(searchObj, {content: 0}).sort({'_id': -1}).limit(count).toArray((err , arr) => {
                 if(err)
                     reject(err);
                 resolve(arr);
