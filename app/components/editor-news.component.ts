@@ -30,7 +30,8 @@ import { NewsService } from '../services/news-service';
             <content-editor name="content" (onEditorContentChange)="onContentChange($event)"
                             [content]="news.content"></content-editor>
             
-            <button class="btn btn-info center-block" (click)="submit()" [disabled]="!userForm.valid">{{buttonText}}</button>
+            <button class="btn btn-info center-block" (click)="submit()"
+                    [disabled]="!userForm.valid || !news.content">{{buttonText}}</button>
          </form>
          <div *ngIf="displayError">
                 <h1 class="err-block">{{errorStr}}</h1>

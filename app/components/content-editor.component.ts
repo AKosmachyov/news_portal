@@ -7,9 +7,8 @@ declare var tinymce: any;
     template: `<textarea id="editor">{{content}}</textarea>`
 })
 export class ContentEditorComponent implements AfterViewInit, OnDestroy {
-    @Input()
-    content: string;
-    @Output() onEditorContentChange = new EventEmitter<string>();
+    @Input() content: string;
+    @Output()onEditorContentChange = new EventEmitter<string>();
 
     private editor: any;
 
