@@ -43,8 +43,9 @@ import { AuthService } from '../services/auth.service';
                            name="name" value minlength="2" maxlength="24" #name="ngModel"
                            [(ngModel)]="user.name">
 
-                    <button type="submit" [disabled]="!userForm.valid" class="btn btn-info col-xs-6 col-xs-offset-3">
+                    <button type="submit" [disabled]="!userForm.valid || isWaitReq" class="btn btn-info col-xs-6 col-xs-offset-3">
                         Продолжить
+                         <img *ngIf="isWaitReq" src="app/spinner.gif"/>
                     </button>
                 </form>
             </div>
@@ -54,15 +55,19 @@ import { AuthService } from '../services/auth.service';
 })
 export class CheckinComponent {
     user: User = new User();
+
     dislpayError: boolean;
     errorStr: string;
+
     passwordInputType: string = 'password';
+    isWaitReq: boolean = false;
     constructor(
         private authService: AuthService,
         private router: Router
     ) {};
     onSubmit(): void {
         const _self = this;
+        _self.isWaitReq = true;
         _self.authService.checkin(_self.user).then(() => {
             if (_self.authService.currentUser) {
                 let redirect = _self.authService.redirectUrl;
@@ -76,6 +81,7 @@ export class CheckinComponent {
             if(!this.errorStr)
                 _self.errorStr = "На сервере произошел сбой";
             _self.dislpayError = true;
+            _self.isWaitReq = false;
         });
     }
     showPassword(flag: boolean){

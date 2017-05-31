@@ -51,3 +51,6 @@ input.ng-touched.ng-valid {
 button[disabled] {
     cursor: pointer;
 }
+button > img {
+    width: 20px;
+}

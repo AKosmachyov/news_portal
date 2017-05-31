@@ -39,7 +39,10 @@ import { AuthService } from '../services/auth.service';
                             Пароль должен быть меньше 24 символов
                         </div>
                     </div>      
-                    <button type="submit" [disabled]="!userForm.valid" class="btn btn-info col-xs-6 col-xs-offset-3">Войти</button>
+                    <button type="submit" [disabled]="!userForm.valid || isWaitReq" class="btn btn-info col-xs-6 col-xs-offset-3">
+                        Войти
+                        <img *ngIf="isWaitReq" src="app/spinner.gif"/>
+                    </button>
                 </form>
             </div>
         </div>
@@ -48,15 +51,19 @@ import { AuthService } from '../services/auth.service';
 })
 export class LoginComponent {
     user:User = new User();
+
     isError: boolean;
     errorStr: string;
+
     passwordInputType: string = 'password';
+    isWaitReq: boolean = false;
     constructor(
         private authService: AuthService,
         private router: Router
     ) {};
     onSubmit(): void {
         const _self = this;
+        _self.isWaitReq = true;
         _self.authService.login(_self.user.login, _self.user.password).then(() => {
             if (_self.authService.currentUser) {
                 let redirect = _self.authService.redirectUrl;
@@ -70,6 +77,7 @@ export class LoginComponent {
             if(!this.errorStr)
                 _self.errorStr = "На сервере произошел сбой";
             _self.isError = true;
+            _self.isWaitReq = false;
         })
     }
     showPassword(flag: boolean){

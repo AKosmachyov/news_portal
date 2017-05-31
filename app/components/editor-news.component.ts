@@ -31,8 +31,14 @@ import { NewsService } from '../services/news-service';
                             [content]="news.content"></content-editor>
             
             <button class="btn btn-info center-block" (click)="submit()"
-                    [disabled]="!userForm.valid || !news.content">{{buttonText}}</button>
+                    [disabled]="!userForm.valid || !news.content || isWaitReq">
+                {{buttonText}}
+                <img *ngIf="isWaitReq" src="app/spinner.gif"/>
+            </button>
          </form>
+         <div *ngIf="!news">
+            <img src="app/spinner.gif"/>
+         </div>
          <div *ngIf="displayError">
                 <h1 class="err-block">{{errorStr}}</h1>
                 <button class="btn btn-info center-block" [routerLink]="['/dashboard']">Возвращаемся</button>
@@ -75,6 +81,9 @@ import { NewsService } from '../services/news-service';
         .err-block + button {
             font-size: 16px;
         }
+        button > img {
+            width: 20px;
+        }
     `]
 })
 
@@ -86,6 +95,8 @@ export class EditorNewsComponent {
 
     displayError: boolean = false;
     errorStr: string;
+
+    isWaitReq: boolean = false;
 
     constructor (
         private newsService : NewsService,
@@ -127,6 +138,7 @@ export class EditorNewsComponent {
     submit() {
         if(!this.isValidFields())
             return;
+        this.isWaitReq = true;
         let func = this.isChange ? this.update : this.add;
         func = func.bind(this);
         func().catch(this.handleError.bind(this));
@@ -159,5 +171,6 @@ export class EditorNewsComponent {
         if(err.status == "500")
             this.errorStr = 'На сервере возникли проблемы';
         this.displayError = true;
+        this.isWaitReq = false;
     }
 }
