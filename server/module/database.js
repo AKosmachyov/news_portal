@@ -1,11 +1,11 @@
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const crypto = require('crypto');
-const HttpError = require('./error/HttpError');
+const HttpError = require('./../error/HttpError');
 
-const url = 'mongodb://localhost:27017/news-portal';
+const url = require('../serverConfig.json').MongoDbUrl || '';
 
-var tempFlag = false;
+var restartingFlag = false;
 
 class DataBase {
     constructor() {
@@ -131,7 +131,7 @@ class DataBase {
         MongoClient.connect(url, {reconnectTries: 5}, (err, db) => {
             if (err) {
                 console.log("Can not connect to the database");
-                tempFlag = false;
+                restartingFlag = false;
                 return self.reconnectToDB();
             }
             console.log("Connected successfully to db");
@@ -140,15 +140,15 @@ class DataBase {
                 newsCollection: db.collection('News'),
                 tokensCollection: db.collection('Tokens')
             });
-            tempFlag = false;
+            restartingFlag = false;
         });
 
     }
 
     reconnectToDB() {
-        if(tempFlag)
+        if(restartingFlag)
             return;
-        tempFlag = true;
+        restartingFlag = true;
         const _self = this;
         setTimeout(_self.connectToDb, 5000, _self);
     }

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const dataBase = require('../database');
-const validationService = require('../validationService');
+const dataBase = require('../module/database');
+const validationService = require('../module/validationService');
 const HttpError = require('../error/HttpError');
 
 router.get('/', function(req, res, next) {
