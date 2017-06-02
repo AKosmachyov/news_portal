@@ -41,13 +41,13 @@ import { AuthService } from '../services/auth.service';
                     </div>      
                     <button type="submit" [disabled]="!userForm.valid || isWaitReq" class="btn btn-info col-xs-6 col-xs-offset-3">
                         Войти
-                        <img *ngIf="isWaitReq" src="app/spinner.gif"/>
+                        <img *ngIf="isWaitReq" src="public/images/spinner.gif"/>
                     </button>
                 </form>
             </div>
         </div>
     `,
-    styleUrls: ['./app/components/authorization.component.css']
+    styleUrls: ['./authorization.component.css']
 })
 export class LoginComponent {
     user:User = new User();

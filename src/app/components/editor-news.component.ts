@@ -33,11 +33,11 @@ import { NewsService } from '../services/news-service';
             <button class="btn btn-info center-block" (click)="submit()"
                     [disabled]="!userForm.valid || !news.content || isWaitReq">
                 {{buttonText}}
-                <img *ngIf="isWaitReq" src="app/spinner.gif"/>
+                <img *ngIf="isWaitReq" src="public/images/spinner.gif"/>
             </button>
          </form>
          <div *ngIf="!news">
-            <img id="spinner" src="app/spinner.gif"/>
+            <img id="spinner" src="public/images/spinner.gif"/>
          </div>
          <div *ngIf="displayError">
                 <h1 class="err-block">{{errorStr}}</h1>

@@ -40,7 +40,7 @@ import { News } from '../models/news';
                 <h1 class="err-block">{{errorStr}}</h1>
                 <button class="btn btn-info center-block" [routerLink]="['/dashboard']">Возвращаемся</button>
          </div>      
-         <img id="spinner" src="app/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
+         <img id="spinner" src="public/images/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
     `,
     styles: [`
         .title {
