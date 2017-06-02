@@ -1,5 +1,10 @@
+# Folders
 .idea
 node_modules
+dist
+
+# Files
 **/app/**/*.js
 **/app/**/*.map
+npm-debug.log
 !systemjs.config.js
