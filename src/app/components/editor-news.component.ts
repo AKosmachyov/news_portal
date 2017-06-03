@@ -37,7 +37,7 @@ import { NewsService } from '../services/news-service';
             </button>
          </form>
          <div *ngIf="!news">
-            <img id="spinner" src="public/images/spinner.gif"/>
+            <img id="spinner" class="center-block" src="public/images/spinner.gif"/>
          </div>
          <div *ngIf="displayError">
                 <h1 class="err-block">{{errorStr}}</h1>
@@ -86,6 +86,7 @@ import { NewsService } from '../services/news-service';
         }
         #spinner {
             height: 62px;
+            width: 62px;
         }
     `]
 })

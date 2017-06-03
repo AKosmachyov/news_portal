@@ -6,7 +6,7 @@ import { NewsService } from '../services/news-service';
 @Component({
     selector: 'dashboard',
     template: `
-        <div class="col-md-8 col-xs-8">
+        <div class="col-md-8 col-xs-12">
             <preview-news *ngFor="let item of news | newsFilter: authorSearch: dateSearch" [news]="item"></preview-news>
             <img id="spinner" src="public/images/spinner.gif" class="img-responsive center-block" *ngIf="isDownload"/>
             <h3 class="alert alert-info col-xs-6 col-xs-offset-3" role="alert" *ngIf="isEndData">
@@ -16,7 +16,7 @@ import { NewsService } from '../services/news-service';
             <button class="btn btn-info col-xs-6 col-xs-offset-3 get-more-button" (click)="getMore()"
                     *ngIf="!needMore && !isDownload">Загрузить ещё</button>
         </div>
-        <div class="col-md-4 col-xs-4">
+        <div class="col-md-4 hidden-xs">
             <div class="form-horizontal">
                 <h3 class="form-group">Фильтрация</h3>
                 <div class="form-group">
