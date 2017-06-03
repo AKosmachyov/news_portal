@@ -1,13 +1,29 @@
 {
   "name": "news_portal",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "",
   "license": "MIT",
-  "scripts": {
-    "start": "node server/bin/www news-app",
-    "stop": "killall node",
-    "build": "rimraf dist && webpack"
+  "author": "AKosmachyov (https://github.com/AKosmachyov/)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AKosmachyov/news_portal.git"
   },
+  "bugs": {
+    "url": "https://github.com/AKosmachyov/news_portal/issues"
+  },
+  "scripts": {
+    "start": "npm run build && npm run server",
+    "stop": "killall node",
+    "server": "node server/bin/www news-app",    
+    "build": "webpack"
+  },
+   "keywords": [
+    "news",
+    "news-portal",
+    "angular2",
+    "nodejs",
+    "expressjs"
+  ],
   "dependencies": {
     "@angular/common": "~4.0.0",
     "@angular/compiler": "~4.0.0",
@@ -34,19 +50,16 @@
     "mongodb": "^2.2.26"
   },
   "devDependencies": {
-    "concurrently": "^3.2.0",
     "typescript": "~2.1.0",
     "@types/core-js": "^0.9.35",
     "@types/node": "^6.0.46",
     "angular2-template-loader": "^0.6.0",
     "awesome-typescript-loader": "^3.0.0-beta.18",
     "css-loader": "^0.26.1",
-    "extract-text-webpack-plugin": "2.0.0-beta.5",
-    "file-loader": "^0.9.0",
+    "extract-text-webpack-plugin": "2.0.0-beta.5",    
     "html-loader": "^0.4.3",
     "html-webpack-plugin": "^2.16.1",
     "raw-loader": "^0.5.1",
-    "rimraf": "^2.5.2",
     "style-loader": "^0.13.1",
     "webpack": "^2.2.1"
   }
